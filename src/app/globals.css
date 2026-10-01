@@ -1,0 +1,1148 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ==========================================================================
+   QAS33 CONSOLE DESIGN TOKENS — “Modern Philippine Government Emergency &
+   Resilience Platform”. Deep government blue #042189 primary, emergency
+   gold #fccf03 accent, navy sidebar, slate neutrals. Applied to BOTH
+   consoles (MDRRMO + barangay) and every shared shadcn component.
+   ========================================================================== */
+:root {
+  --radius: 0.75rem;
+  --background: #f4f6fb;
+  --foreground: #101a2e;
+  --card: #ffffff;
+  --card-foreground: #101a2e;
+  --popover: #ffffff;
+  --popover-foreground: #101a2e;
+  --primary: #042189;
+  --primary-foreground: #ffffff;
+  --secondary: #e9eef9;
+  --secondary-foreground: #0a2a7a;
+  --muted: #eef1f7;
+  --muted-foreground: #56617a;
+  --accent: #e9eefb;
+  --accent-foreground: #0a2a7a;
+  --destructive: #dc2626;
+  --border: #dee3ee;
+  --input: #d6dcea;
+  --ring: #1d3fae;
+  --chart-1: #042189;
+  --chart-2: #d9ad00;
+  --chart-3: #059669;
+  --chart-4: #ea580c;
+  --chart-5: #0891b2;
+  /* QAS33 sidebars are intentionally DARK in both light & dark mode
+     (mobile Sheet drawer portals to <body>, so the dark palette must
+     live on :root to apply everywhere). Deep navy — command-center identity. */
+  --sidebar: #0a1636;
+  --sidebar-foreground: #dbe3f4;
+  --sidebar-primary: #fccf03;
+  --sidebar-primary-foreground: #201a00;
+  --sidebar-accent: #152348;
+  --sidebar-accent-foreground: #eef2fb;
+  --sidebar-border: rgba(148, 163, 205, 0.14);
+  --sidebar-ring: #7c9bff;
+}
+
+.dark {
+  --background: #0a1120;
+  --foreground: #e7edf8;
+  --card: #0f1930;
+  --card-foreground: #e7edf8;
+  --popover: #101b33;
+  --popover-foreground: #e7edf8;
+  --primary: #3b63e0;
+  --primary-foreground: #ffffff;
+  --secondary: #1a2540;
+  --secondary-foreground: #dce4f5;
+  --muted: #141f38;
+  --muted-foreground: #94a3c0;
+  --accent: #182747;
+  --accent-foreground: #e7edf8;
+  --destructive: #ef4444;
+  --border: rgba(148, 163, 184, 0.16);
+  --input: rgba(148, 163, 184, 0.22);
+  --ring: #8fabff;
+  --chart-1: #6f92ff;
+  --chart-2: #fccf03;
+  --chart-3: #34d399;
+  --chart-4: #fb923c;
+  --chart-5: #22d3ee;
+  --sidebar: #0a1329;
+  --sidebar-foreground: #dbe3f4;
+  --sidebar-primary: #fccf03;
+  --sidebar-primary-foreground: #201a00;
+  --sidebar-accent: #14203f;
+  --sidebar-accent-foreground: #eef2fb;
+  --sidebar-border: rgba(148, 163, 205, 0.16);
+  --sidebar-ring: #8fabff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ==========================================================================
+   QAS33 PUBLIC PORTAL — government design system tokens
+   deep blue #042189 (primary) · yellow #fccf03 (accent) · white · slate
+   ========================================================================== */
+@theme {
+  --color-gov-blue: #042189;
+  --color-gov-blue-dark: #031862;
+  --color-gov-blue-deep: #020f3f;
+  --color-gov-blue-800: #052a9e;
+  --color-gov-blue-700: #0630b0;
+  --color-gov-blue-600: #0a3ec4;
+  --color-gov-blue-100: #dbe2f8;
+  --color-gov-blue-50: #eef1fb;
+  --color-gov-gold: #fccf03;
+  --color-gov-gold-dark: #d9ad00;
+  --color-gov-gold-light: #fde79a;
+  --color-emergency-red: #b91c1c;
+  --color-emergency-red-dark: #7f1d1d;
+  --color-emergency-orange: #ea580c;
+  --color-emergency-amber: #f59e0b;
+
+  /* Operational status tiers — NORMAL / ALERT / HEIGHTENED ALERT / EMERGENCY.
+     Pairs: accessible text color + tinted surface. Never rely on color alone:
+     components must always pair these with a text label + icon. */
+  --color-op-normal: #047857;
+  --color-op-normal-bg: #ecfdf5;
+  --color-op-normal-border: #a7f3d0;
+  --color-op-alert: #a16207;
+  --color-op-alert-bg: #fefce8;
+  --color-op-alert-border: #fde68a;
+  --color-op-heightened: #c2410c;
+  --color-op-heightened-bg: #fff7ed;
+  --color-op-heightened-border: #fed7aa;
+  --color-op-emergency: #b91c1c;
+  --color-op-emergency-bg: #fef2f2;
+  --color-op-emergency-border: #fecaca;
+}
+
+/* ---- Broadcast ticker marquee ---- */
+@keyframes portal-ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.portal-ticker-track {
+  display: flex;
+  width: max-content;
+  /* Duration is set per-instance via --ticker-duration (constant px/s speed). */
+  animation: portal-ticker var(--ticker-duration, 45s) linear infinite;
+}
+
+.portal-ticker-track:hover,
+.portal-ticker-track[data-paused="true"] {
+  animation-play-state: paused;
+}
+
+/* ---- Emergency status pulse ---- */
+@keyframes portal-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.86);
+  }
+}
+
+.portal-status-dot {
+  animation: portal-pulse 1.6s ease-in-out infinite;
+}
+
+/* ---- Slow attention pulse for emergency banner (subtle, professional) ---- */
+@keyframes portal-alert-glow {
+  0%,
+  100% {
+    box-shadow: inset 0 -2px 0 0 rgba(252, 207, 3, 0.9);
+  }
+  50% {
+    box-shadow: inset 0 -2px 0 0 rgba(252, 207, 3, 0.45);
+  }
+}
+
+.portal-alert-glow {
+  animation: portal-alert-glow 2.4s ease-in-out infinite;
+}
+
+/* ---- Hazard / warning stripe pattern (emergency mode) ---- */
+.portal-warning-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(252, 207, 3, 0.16) 0,
+    rgba(252, 207, 3, 0.16) 12px,
+    rgba(0, 0, 0, 0.14) 12px,
+    rgba(0, 0, 0, 0.14) 24px
+  );
+}
+
+/* ---- Subtle grid pattern for the hero ---- */
+.portal-grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* ---- Portal section entrance animations ---- */
+@keyframes portal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes portal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.portal-anim-fade {
+  animation: portal-fade-in 0.55s ease-out both;
+}
+
+.portal-anim-slide-up {
+  animation: portal-slide-up 0.55s ease-out both;
+}
+
+/* ---- Reduced motion: honor user preference ---- */
+@media (prefers-reduced-motion: reduce) {
+  .portal-ticker-track {
+    animation: none;
+  }
+  .portal-status-dot,
+  .portal-alert-glow {
+    animation: none;
+  }
+  .portal-anim-fade,
+  .portal-anim-slide-up {
+    animation: none;
+  }
+}
+
+/* ---- Portal scrollbars (long lists) ---- */
+.portal-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.portal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.portal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+}
+
+.portal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.55);
+}
+
+/* ---- Smooth scrolling for anchor navigation ---- */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ---- No horizontal scroll for forecast strips ---- */
+.portal-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.portal-no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ==========================================================================
+   TYPHOON / EMERGENCY OPERATION — FULL-SITE DARK THEME (.portal-dark)
+   --------------------------------------------------------------------------
+   Applied to the portal site root — and, outside preview mode, to <html> as
+   well so Radix portals (dialogs, drawers rendered at document.body level)
+   inherit it. These rules are UNLAYERED, so they take priority over Tailwind's
+   layered utilities without !important: the light utility classes used across
+   the portal are remapped onto a deep-navy "emergency operations center"
+   palette (never pure black) with the existing gold / red accents.
+   ========================================================================== */
+
+.portal-dark {
+  color-scheme: dark;
+
+  /* shadcn design tokens → dark (drives dialogs, inputs, selects, skeletons) */
+  --background: #0b1322;
+  --foreground: #e8eef7;
+  --card: #111a30;
+  --card-foreground: #e8eef7;
+  --popover: #131d34;
+  --popover-foreground: #e8eef7;
+  --primary: #3b5bdb;
+  --primary-foreground: #ffffff;
+  --secondary: #1a2540;
+  --secondary-foreground: #dbe4f5;
+  --muted: #16213a;
+  --muted-foreground: #9fb0c8;
+  --accent: #1c2947;
+  --accent-foreground: #e8eef7;
+  --destructive: #ef4444;
+  --border: rgba(148, 163, 184, 0.18);
+  --input: rgba(148, 163, 184, 0.24);
+  --ring: #fccf03;
+}
+
+/* ---- Surfaces ---- */
+.portal-dark .bg-white {
+  background-color: #111a30;
+}
+.portal-dark .bg-white\/95 {
+  background-color: rgba(13, 21, 38, 0.95);
+}
+.portal-dark .bg-slate-50,
+.portal-dark .bg-slate-50\/60,
+.portal-dark .bg-slate-50\/70,
+.portal-dark .bg-slate-50\/80 {
+  background-color: #0d1526;
+}
+.portal-dark .bg-slate-100,
+.portal-dark .bg-slate-100\/60 {
+  background-color: #16213a;
+}
+/* skeleton shimmer blocks */
+.portal-dark .bg-slate-200\/70,
+.portal-dark .bg-slate-200\/80 {
+  background-color: rgba(148, 163, 184, 0.14);
+}
+.portal-dark .bg-gov-blue-50,
+.portal-dark .bg-gov-blue-50\/60,
+.portal-dark .bg-gov-blue-50\/70 {
+  background-color: rgba(84, 110, 255, 0.1);
+}
+
+/* ---- Tint chips → dark tints ---- */
+.portal-dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.14);
+}
+.portal-dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.14);
+}
+.portal-dark .bg-red-50,
+.portal-dark .bg-red-50\/60 {
+  background-color: rgba(239, 68, 68, 0.14);
+}
+.portal-dark .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.14);
+}
+.portal-dark .bg-cyan-50 {
+  background-color: rgba(6, 182, 212, 0.14);
+}
+.portal-dark .bg-teal-50 {
+  background-color: rgba(20, 184, 166, 0.14);
+}
+.portal-dark .bg-orange-50 {
+  background-color: rgba(249, 115, 22, 0.14);
+}
+.portal-dark .bg-green-50 {
+  background-color: rgba(34, 197, 94, 0.14);
+}
+.portal-dark .bg-violet-50 {
+  background-color: rgba(167, 139, 250, 0.14);
+}
+.portal-dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.2);
+}
+.portal-dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+.portal-dark .bg-green-100\/40,
+.portal-dark .bg-green-100\/60 {
+  background-color: rgba(34, 197, 94, 0.18);
+}
+
+/* Solid gov-blue lifts for contrast against the dark navy page */
+.portal-dark .bg-gov-blue {
+  background-color: #1d3fae;
+}
+
+/* Page root — MUST stay after the .bg-white rule (equal specificity, source order).
+   The compound selector covers the admin PREVIEW case, where .portal-dark lives on
+   the site root itself rather than on <html> (descendant selectors can't match the
+   element that carries the class).
+   Light mode carries a soft "frosted sky" gradient so the glass cards have a
+   layered background to blur against; the emergency dark theme gets its own
+   deep-navy gradient. */
+.portal-site-root {
+  background-color: #f4f7fd;
+  background-image:
+    radial-gradient(58rem 30rem at 88% -6%, rgba(29, 63, 174, 0.12), transparent 62%),
+    radial-gradient(46rem 24rem at -12% 18%, rgba(252, 207, 3, 0.08), transparent 58%),
+    linear-gradient(180deg, #ecf1fb 0%, #f7f9fe 34%, #fdfdff 100%);
+}
+.portal-dark .portal-site-root,
+.portal-dark.portal-site-root {
+  background-color: #0a1122;
+  background-image:
+    radial-gradient(58rem 30rem at 88% -6%, rgba(29, 63, 174, 0.26), transparent 62%),
+    linear-gradient(180deg, #0c142a 0%, #0a1122 45%, #0a1122 100%);
+}
+
+/* ---- Glassmorphism (frontpage cards) ------------------------------------
+   Applied via the .portal-glass utility on card surfaces. Semi-transparent
+   tint + backdrop blur + translucent highlight border + soft lift shadow.
+   Text stays slate-800/600 → WCAG AA against the light frosted background.
+   Wrapped in @layer components so Tailwind UTILITIES (which live in the
+   later @layer utilities) can still override individual sides/effects on a
+   glass card — e.g. `border-l-4 border-l-red-600` left accents, hover:shadow-md
+   lifts — while utility `bg-white`/`border-slate-*` must never be combined
+   with portal-glass (they would cover the frosted surface). Un-layered, these
+   rules would instead beat every utility and silently kill those accents. */
+@layer components {
+  .portal-glass {
+    background-color: rgba(255, 255, 255, 0.62);
+    -webkit-backdrop-filter: blur(14px) saturate(1.35);
+    backdrop-filter: blur(14px) saturate(1.35);
+    border: 1px solid rgba(255, 255, 255, 0.68);
+    box-shadow:
+      0 10px 32px -16px rgba(4, 33, 137, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+  /* Stronger variant for panels that sit over busy backgrounds (maps, tickers) */
+  .portal-glass-strong {
+    background-color: rgba(255, 255, 255, 0.82);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    backdrop-filter: blur(16px) saturate(1.3);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 12px 36px -18px rgba(4, 33, 137, 0.28);
+  }
+  /* Emergency dark theme — smoked-glass cards */
+  .portal-dark .portal-glass,
+  .portal-dark.portal-glass {
+    background-color: rgba(17, 26, 48, 0.6);
+    border-color: rgba(148, 163, 184, 0.18);
+    box-shadow: 0 12px 32px -18px rgba(0, 0, 0, 0.65);
+  }
+  .portal-dark .portal-glass-strong,
+  .portal-dark.portal-glass-strong {
+    background-color: rgba(13, 21, 38, 0.85);
+    border-color: rgba(148, 163, 184, 0.22);
+    box-shadow: 0 12px 36px -18px rgba(0, 0, 0, 0.7);
+  }
+  /* Graceful fallback when backdrop-filter is unsupported */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .portal-glass {
+      background-color: rgba(255, 255, 255, 0.92);
+    }
+    .portal-glass-strong {
+      background-color: rgba(255, 255, 255, 0.97);
+    }
+    .portal-dark .portal-glass,
+    .portal-dark.portal-glass {
+      background-color: rgba(17, 26, 48, 0.96);
+    }
+  }
+}
+
+/* ---- Borders ---- */
+.portal-dark .border-slate-100 {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+.portal-dark .border-slate-200,
+.portal-dark .border-slate-200\/70,
+.portal-dark .border-slate-200\/80 {
+  border-color: rgba(148, 163, 184, 0.2);
+}
+.portal-dark .border-slate-300 {
+  border-color: rgba(148, 163, 184, 0.3);
+}
+.portal-dark .border-gov-blue-100 {
+  border-color: rgba(84, 110, 255, 0.25);
+}
+.portal-dark .border-gov-blue {
+  border-color: #3b5bdb;
+}
+.portal-dark .border-emergency-red\/30 {
+  border-color: rgba(248, 113, 113, 0.45);
+}
+.portal-dark .border-emerald-200 {
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.portal-dark .border-amber-200 {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.portal-dark .border-red-200,
+.portal-dark .border-red-100 {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+.portal-dark .border-blue-200,
+.portal-dark .border-blue-300 {
+  border-color: rgba(59, 130, 246, 0.35);
+}
+.portal-dark .border-cyan-200 {
+  border-color: rgba(6, 182, 212, 0.35);
+}
+.portal-dark .border-teal-200 {
+  border-color: rgba(20, 184, 166, 0.35);
+}
+.portal-dark .border-orange-200,
+.portal-dark .border-orange-300 {
+  border-color: rgba(249, 115, 22, 0.35);
+}
+.portal-dark .border-green-200,
+.portal-dark .border-green-300 {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+.portal-dark .border-violet-200 {
+  border-color: rgba(167, 139, 250, 0.35);
+}
+.portal-dark .border-emerald-300 {
+  border-color: rgba(52, 211, 153, 0.45);
+}
+
+/* ---- Text ---- */
+.portal-dark .text-slate-900 {
+  color: #f4f7fc;
+}
+.portal-dark .text-slate-800 {
+  color: #e8eef7;
+}
+.portal-dark .text-slate-700 {
+  color: #ccd8ea;
+}
+.portal-dark .text-slate-600 {
+  color: #a9b7cc;
+}
+.portal-dark .text-slate-500 {
+  color: #92a2ba;
+}
+.portal-dark .text-slate-400 {
+  color: #7e8ea8;
+}
+.portal-dark .text-gov-blue {
+  color: #8fb0ff;
+}
+.portal-dark .text-gov-blue-deep {
+  color: #dce6ff;
+}
+.portal-dark .text-emergency-red {
+  color: #ff8f8f;
+}
+.portal-dark .text-red-800,
+.portal-dark .text-red-800\/80 {
+  color: #fca5a5;
+}
+.portal-dark .text-red-700,
+.portal-dark .text-red-600 {
+  color: #f87171;
+}
+.portal-dark .text-emerald-800,
+.portal-dark .text-emerald-800\/80 {
+  color: #6ee7b7;
+}
+.portal-dark .text-emerald-700,
+.portal-dark .text-emerald-600 {
+  color: #34d399;
+}
+.portal-dark .text-emerald-900 {
+  color: #a7f3d0;
+}
+.portal-dark .text-amber-800,
+.portal-dark .text-amber-800\/80 {
+  color: #fcd34d;
+}
+.portal-dark .text-amber-700,
+.portal-dark .text-amber-600 {
+  color: #fbbf24;
+}
+.portal-dark .text-amber-900 {
+  color: #fde68a;
+}
+.portal-dark .text-blue-800 {
+  color: #93c5fd;
+}
+.portal-dark .text-cyan-700,
+.portal-dark .text-cyan-600 {
+  color: #67e8f9;
+}
+.portal-dark .text-teal-800,
+.portal-dark .text-teal-700,
+.portal-dark .text-teal-600 {
+  color: #5eead4;
+}
+.portal-dark .text-orange-800 {
+  color: #fdba74;
+}
+.portal-dark .text-orange-600 {
+  color: #fb923c;
+}
+.portal-dark .text-green-800,
+.portal-dark .text-green-800\/70,
+.portal-dark .text-green-800\/80 {
+  color: #86efac;
+}
+.portal-dark .text-green-900 {
+  color: #bbf7d0;
+}
+.portal-dark .text-green-950 {
+  color: #dcfce7;
+}
+.portal-dark .text-violet-800 {
+  color: #c4b5fd;
+}
+
+/* ---- Hover states ---- */
+.portal-dark .hover\:bg-gov-blue-50:hover {
+  background-color: rgba(84, 110, 255, 0.16);
+}
+.portal-dark .hover\:bg-gov-blue-100:hover {
+  background-color: rgba(84, 110, 255, 0.22);
+}
+.portal-dark .hover\:bg-gov-blue:hover {
+  background-color: #2950d4;
+}
+.portal-dark .hover\:bg-gov-blue-700:hover {
+  background-color: #2a55c9;
+}
+.portal-dark .hover\:bg-red-50:hover {
+  background-color: rgba(239, 68, 68, 0.16);
+}
+.portal-dark .hover\:bg-red-100:hover {
+  background-color: rgba(239, 68, 68, 0.22);
+}
+.portal-dark .hover\:bg-slate-50:hover,
+.portal-dark .hover\:bg-slate-100:hover {
+  background-color: rgba(148, 163, 184, 0.12);
+}
+.portal-dark .hover\:bg-emerald-100:hover {
+  background-color: rgba(16, 185, 129, 0.22);
+}
+.portal-dark .hover\:text-gov-blue:hover {
+  color: #a8c2ff;
+}
+.portal-dark .hover\:text-emergency-red:hover {
+  color: #ffa8a8;
+}
+.portal-dark .hover\:text-red-700:hover {
+  color: #fca5a5;
+}
+.portal-dark .hover\:border-gov-blue:hover {
+  border-color: #3b5bdb;
+}
+.portal-dark .hover\:border-slate-300:hover {
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
+/* ---- Focus ring offsets: avoid white halos on the dark page ---- */
+.portal-dark .ring-offset-2,
+.portal-dark .ring-offset-4 {
+  --tw-ring-offset-color: #0b1322;
+}
+
+/* ---- Dark scrollbars + selection ---- */
+.portal-dark .portal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+}
+.portal-dark .portal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
+}
+.portal-dark ::selection {
+  background: rgba(252, 207, 3, 0.35);
+  color: #ffffff;
+}
+
+/* ---- QAS33 printable barangay account credential sheets ---- */
+@media print {
+  @page {
+    margin: 10mm;
+  }
+
+  /* While the credential overlay is open, hide the whole app except the portal */
+  body.qas33-printing > *:not(#qas33-print-portal) {
+    display: none !important;
+  }
+
+  #qas33-print-portal {
+    position: static !important;
+    inset: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+  }
+
+  .qas33-credential-sheet {
+    box-shadow: none !important;
+    max-width: none !important;
+    padding: 0 !important; /* @page margin handles spacing */
+  }
+
+  .qas33-credential-sheet.qas33-sheet-page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  /* Keep the official header bar / badges colored on paper */
+  #qas33-print-portal,
+  #qas33-print-portal * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* ==========================================================================
+   EVACUATION MAP (Leaflet) — marker / cluster / user-location pins.
+   These elements are created at RUNTIME via L.divIcon HTML strings, so they
+   cannot use compiled Tailwind classes — plain CSS lives here.
+   ========================================================================== */
+
+/* Reset leaflet's default icon styling on the wrapper element. */
+.portal-evac-marker-icon,
+.portal-evac-cluster-icon,
+.portal-evac-user-icon {
+  background: transparent;
+  border: none;
+}
+
+/* Status dot marker (26px circle, white ring, soft shadow). */
+.portal-evac-marker {
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background-color: var(--portal-evac-color, #10b981);
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 15, 63, 0.45);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.portal-evac-marker:hover {
+  transform: scale(1.18);
+}
+
+/* Selected marker — pulsing ring. */
+.portal-evac-marker.is-selected {
+  position: relative;
+  z-index: 1000;
+}
+
+.portal-evac-marker.is-selected::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 9999px;
+  border: 3px solid var(--portal-evac-color, #10b981);
+  animation: portal-marker-ring 1.4s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes portal-marker-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Cluster bubbles — size-ramped colors, count inside. */
+.portal-evac-cluster {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(2, 15, 63, 0.4);
+}
+
+.portal-evac-cluster-sm {
+  background-color: #042189;
+}
+
+.portal-evac-cluster-md {
+  background-color: #b45309;
+}
+
+.portal-evac-cluster-lg {
+  background-color: #b91c1c;
+}
+
+/* User location dot (blue with pulse). */
+.portal-evac-user {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background-color: #2563eb;
+  border: 3px solid #ffffff;
+  box-shadow: 0 1px 6px rgba(2, 15, 63, 0.5);
+  position: relative;
+}
+
+.portal-evac-user::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 9999px;
+  border: 2px solid rgba(37, 99, 235, 0.55);
+  animation: portal-marker-ring 1.8s ease-out infinite;
+  pointer-events: none;
+}
+
+/* Dark (TYPHOON) mode: soften the light OSM tiles + dim the attribution. */
+.portal-dark .leaflet-container {
+  filter: brightness(0.85) saturate(0.9);
+}
+
+.portal-dark .leaflet-control-attribution {
+  background: rgba(11, 19, 34, 0.82);
+  color: #92a2ba;
+}
+
+.portal-dark .leaflet-control-attribution a {
+  color: #8fb0ff;
+}
+
+.portal-dark .leaflet-bar a,
+.portal-dark .leaflet-bar a:hover {
+  background-color: #111a30;
+  color: #e8eef7;
+  border-bottom-color: rgba(148, 163, 184, 0.25);
+}
+
+/* Reduced motion: marker ring pulses off. */
+@media (prefers-reduced-motion: reduce) {
+  .portal-evac-marker.is-selected::after,
+  .portal-evac-user::after {
+    animation: none;
+    opacity: 0.45;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+   NEWS RICH TEXT — server-sanitized HTML (p/ul/li/h2-4/blockquote/a/…) from
+   the MDRRMO editor, rendered inside the detail dialog.
+   ========================================================================== */
+
+.prose-portal p {
+  margin: 0.625rem 0;
+}
+
+.prose-portal h2,
+.prose-portal h3,
+.prose-portal h4 {
+  font-weight: 700;
+  color: #0f172a;
+  margin: 1.1rem 0 0.4rem;
+}
+
+.portal-dark .prose-portal h2,
+.portal-dark .prose-portal h3,
+.portal-dark .prose-portal h4 {
+  color: #f4f7fc;
+}
+
+.prose-portal h2 {
+  font-size: 1.05rem;
+}
+
+.prose-portal h3 {
+  font-size: 0.975rem;
+}
+
+.prose-portal h4 {
+  font-size: 0.9rem;
+}
+
+.prose-portal ul,
+.prose-portal ol {
+  margin: 0.625rem 0;
+  padding-left: 1.4rem;
+}
+
+.prose-portal ul {
+  list-style: disc;
+}
+
+.prose-portal ol {
+  list-style: decimal;
+}
+
+.prose-portal li {
+  margin: 0.25rem 0;
+}
+
+.prose-portal blockquote {
+  border-left: 3px solid #fccf03;
+  padding-left: 0.9rem;
+  margin: 0.75rem 0;
+  color: #64748b;
+  font-style: italic;
+}
+
+.portal-dark .prose-portal blockquote {
+  color: #92a2ba;
+}
+
+.prose-portal a {
+  color: #042189;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.portal-dark .prose-portal a {
+  color: #8fb0ff;
+}
+
+.prose-portal strong {
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   CONSOLE SHARED DETAILS — premium surfaces for the MDRRMO / barangay
+   consoles (the public portal keeps its own portal-* system above).
+   ========================================================================== */
+
+/* Page transition — subtle, fast, respectful of reduced-motion. */
+@keyframes console-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.console-page-enter {
+  animation: console-page-in 0.26s ease-out both;
+}
+
+/* Premium card surface: white, thin border, layered soft shadow, 16px radius. */
+@layer components {
+  .console-card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    box-shadow:
+      0 1px 2px rgba(2, 15, 63, 0.05),
+      0 10px 28px -18px rgba(4, 33, 137, 0.18);
+  }
+  .console-card-hover {
+    transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+  }
+  .console-card-hover:hover {
+    border-color: rgba(4, 33, 137, 0.28);
+    box-shadow:
+      0 2px 4px rgba(2, 15, 63, 0.06),
+      0 16px 36px -18px rgba(4, 33, 137, 0.26);
+  }
+  /* Gradient accent line — used under section headers / on brand surfaces */
+  .console-accent-line {
+    background-image: linear-gradient(90deg, #042189 0%, #1d3fae 38%, #fccf03 100%);
+  }
+  /* Emergency-mode chrome applied to the console shell root */
+  .console-emergency-band {
+    background-image: linear-gradient(90deg, #7f1d1d 0%, #b91c1c 55%, #dc2626 100%);
+  }
+}
+
+/* Selection: gold on government blue (portal-dark keeps its own). */
+::selection {
+  background: rgba(4, 33, 137, 0.92);
+  color: #ffffff;
+}
+
+/* Thin, rounded scrollbars for console lists/tables. */
+.console-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.console-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.console-scroll::-webkit-scrollbar-thumb {
+  background: rgba(86, 97, 122, 0.3);
+  border-radius: 9999px;
+}
+.console-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(86, 97, 122, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .console-page-enter {
+    animation: none;
+  }
+  .console-card-hover,
+  .console-card-hover:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ---- Satellite map section (23-a) ---- */
+
+/* Leaflet popup content for evacuation centers + overlay features
+   (built via DOM elements; dark-on-light readable in both portal themes). */
+.portal-sat-popup {
+  font-family: inherit;
+  min-width: 200px;
+  max-width: 280px;
+  line-height: 1.35;
+}
+
+.portal-sat-popup .sat-pop-chip {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin: 0 0 2px;
+}
+
+.portal-sat-popup .sat-pop-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1px;
+}
+
+.portal-sat-popup .sat-pop-sub {
+  font-size: 11px;
+  color: #475569;
+  margin: 0 0 6px;
+}
+
+.portal-sat-popup .sat-pop-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  margin: 0 0 4px;
+}
+
+.portal-sat-popup .sat-pop-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.25);
+}
+
+.portal-sat-popup .sat-pop-cap {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.portal-sat-popup .sat-pop-slots {
+  font-size: 11px;
+  font-weight: 600;
+  color: #059669;
+  margin: 0 0 6px;
+}
+
+.portal-sat-popup .sat-pop-desc {
+  font-size: 11.5px;
+  color: #475569;
+  margin: 2px 0 0;
+  white-space: pre-line;
+}
+
+.portal-sat-popup .sat-pop-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.portal-sat-popup .sat-pop-actions a {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #042189;
+  text-decoration: none;
+}
+
+.portal-sat-popup .sat-pop-actions a:hover {
+  text-decoration: underline;
+}
