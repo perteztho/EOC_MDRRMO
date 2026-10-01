@@ -545,6 +545,34 @@ export async function saveFrontpage(
   }).catch(() => undefined);
 }
 
+/**
+ * Toggle only the published flag of a barangay's public frontpage — without
+ * touching the saved content. Used by the barangay portal Settings page
+ * (quick publish / hide switch). If the barangay never saved customizations,
+ * a minimal row is created so the hidden state still persists (the public
+ * page merges `{}` content over the DB-derived defaults, so it renders the
+ * exact same default page).
+ */
+export async function setFrontpagePublished(
+  barangayId: string,
+  barangayCode: string,
+  published: boolean,
+  editorDescription: string
+): Promise<void> {
+  await db.barangayFrontpage.upsert({
+    where: { barangayId },
+    create: { barangayId, content: "{}", published, updatedBy: editorDescription },
+    update: { published, updatedBy: editorDescription },
+  });
+  await logAudit({
+    actorType: "BARANGAY",
+    barangayId,
+    actorName: editorDescription,
+    action: published ? "FRONTPAGE_PUBLISHED" : "FRONTPAGE_HIDDEN",
+    detail: `Public frontpage ${published ? "published — visible at /barangay" : "hidden from the public"} (settings quick toggle, ${barangayCode}).`,
+  }).catch(() => undefined);
+}
+
 export async function resetFrontpage(barangayId: string, editorDescription: string): Promise<void> {
   await db.barangayFrontpage.deleteMany({ where: { barangayId } });
   await logAudit({

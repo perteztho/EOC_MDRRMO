@@ -105,7 +105,7 @@ export function UtilityBar({
           <span className="truncate">
             REPUBLIC OF THE PHILIPPINES
             <span aria-hidden="true" className="px-1.5 text-gov-gold/70">·</span>
-            MUNICIPALITY OF PIO DURAN
+            REGION V (BICOL)
             <span aria-hidden="true" className="px-1.5 text-gov-gold/70">·</span>
             PROVINCE OF ALBAY
           </span>

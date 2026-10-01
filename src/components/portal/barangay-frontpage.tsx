@@ -944,7 +944,7 @@ function FrontpageView({ data, onLogin }: { data: BarangayFrontpageResponse; onL
               </p>
             </div>
           </div>
-          <div className="grid-2">
+          <div className="grid-1">
             <div className="card">
               <VisionMissionGoals content={content} />
             </div>
@@ -953,8 +953,8 @@ function FrontpageView({ data, onLogin }: { data: BarangayFrontpageResponse; onL
               <p style={{ color: "var(--brgy-muted)", fontSize: ".85rem", marginTop: 4 }}>
                 Elected and appointed officials serving the barangay. Click a card to see the position.
               </p>
-              <div className="grid-3" style={{ marginTop: 12 }}>
-                {council.slice(0, 3).map((c) => (
+              <div className="grid-4" style={{ marginTop: 12 }}>
+                {council.slice(0, 7).map((c) => (
                   <div
                     key={c.id}
                     className="card council-card"

@@ -181,6 +181,12 @@ export const api = {
       method: "PUT",
       body: JSON.stringify({ content, published }),
     }),
+  /** Quick publish/hide toggle (Settings page) — content is untouched. */
+  setFrontpagePublished: (published: boolean) =>
+    request<{ ok: boolean; published: boolean }>("/api/barangay/frontpage", {
+      method: "PATCH",
+      body: JSON.stringify({ published }),
+    }),
   resetFrontpage: () =>
     request<{ ok: boolean }>("/api/barangay/frontpage", { method: "DELETE" }),
   frontpageInquiries: () =>
@@ -458,6 +464,44 @@ export const api = {
     }),
   adminDatabaseDelete: (table: string, id: string) =>
     request<{ ok: boolean }>(`/api/admin/database/${table}/${encodeURIComponent(id)}`, { method: "DELETE" }),
+
+  // ---- admin: database backup / restore (SYSTEM_ADMIN only) ----
+  adminDatabaseExportUrl: (table: "ALL" | string) =>
+    `/api/admin/database/export?table=${encodeURIComponent(table)}`,
+  adminDatabaseImport: (
+    payload: unknown,
+    mode: "merge" | "replace",
+    tables?: string[]
+  ) =>
+    request<{
+      ok: boolean;
+      mode: string;
+      format: string;
+      totalInserted: number;
+      unknownKeys: string[];
+      errors: string[];
+      results: Array<{ model: string; label: string; inserted: number; skipped: number; mode: string }>;
+    }>("/api/admin/database/import", {
+      method: "POST",
+      body: JSON.stringify({ payload, mode, tables }),
+    }),
+
+  // ---- admin: full system backup (Settings — SYSTEM_ADMIN only) ----
+  adminSystemBackupUrl: () => "/api/admin/settings/system-backup",
+  adminSystemRestore: (file: File, confirm: string) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("confirm", confirm);
+    return request<{
+      ok: boolean;
+      file: string;
+      tables: number;
+      totalInserted: number;
+      filesRestored: number;
+      fileErrors: string[];
+      rows: Array<{ table: string; inserted: number }>;
+    }>("/api/admin/settings/system-backup", { method: "POST", body: form });
+  },
 
   // ---- file library (ALL users — barangay + every console role) ----
   filesList: (params: {

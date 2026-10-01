@@ -16,7 +16,7 @@ import {
   MessageSquare,
   Paperclip,
   RefreshCw,
-  User,
+  Settings2,
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -105,10 +105,10 @@ export function DashboardTab({
           desc: t("Requirements & supporting documents", "Mga kailangan at karagdagang dokumento"),
         },
         {
-          key: "profile",
-          icon: User,
-          title: t("View Profile / Change PIN", "Profile / Palitan ang PIN"),
-          desc: t("Account & security settings", "Setting ng account at seguridad"),
+          key: "settings",
+          icon: Settings2,
+          title: t("Settings / Change PIN", "Setting / Palitan ang PIN"),
+          desc: t("Frontpage, security & preferences", "Frontpage, seguridad at kagustuhan"),
         },
       ]
     : [];

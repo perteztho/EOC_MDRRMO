@@ -1,18 +1,13 @@
 "use client";
 
 // QAS33 Barangay Portal — Profile tab
+// (Access PIN management lives in the Settings tab.)
 
-import { useState } from "react";
-import { Info, ShieldCheck, UserRound } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Settings2, ShieldCheck, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { api, formatDateTime } from "@/lib/qas33/api";
+import { formatDateTime } from "@/lib/qas33/api";
 import type { BarangayOverview, SessionInfo } from "@/lib/qas33/types";
-import { errMsg } from "./barangay-shared";
 
 // DB names may already carry the "Barangay" prefix (Poblacion I–V) — strip it
 // so composed strings never read "Barangay Barangay III".
@@ -22,51 +17,16 @@ const bareBarangayName = (name: string) => name.replace(/^Barangay\s+/i, "").tri
 // Profile tab
 // ---------------------------------------------------------------------------
 
-export function ProfileTab({ session, overview }: { session: SessionInfo; overview: BarangayOverview | null }) {
-  const { toast } = useToast();
-  const [currentPin, setCurrentPin] = useState("");
-  const [newPin, setNewPin] = useState("");
-  const [confirmPin, setConfirmPin] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-
+export function ProfileTab({
+  session,
+  overview,
+  onOpenSettings,
+}: {
+  session: SessionInfo;
+  overview: BarangayOverview | null;
+  onOpenSettings: () => void;
+}) {
   const barangay = overview?.barangay ?? session.barangay;
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setFormError(null);
-    if (!currentPin || !newPin || !confirmPin) {
-      setFormError("Please fill in all fields.");
-      return;
-    }
-    if (newPin.length < 6) {
-      setFormError("New PIN must be at least 6 characters.");
-      return;
-    }
-    if (newPin !== confirmPin) {
-      setFormError("New PIN and confirmation do not match.");
-      return;
-    }
-    if (newPin === currentPin) {
-      setFormError("New PIN must be different from the current PIN.");
-      return;
-    }
-    setSaving(true);
-    try {
-      await api.changePin(currentPin, newPin, confirmPin);
-      toast({
-        title: "PIN updated",
-        description: "Use your new Access PIN the next time you log in.",
-      });
-      setCurrentPin("");
-      setNewPin("");
-      setConfirmPin("");
-    } catch (err) {
-      toast({ variant: "destructive", title: "Could not change PIN", description: errMsg(err) });
-    } finally {
-      setSaving(false);
-    }
-  }
 
   return (
     <div className="space-y-4">
@@ -122,65 +82,21 @@ export function ProfileTab({ session, overview }: { session: SessionInfo; overvi
         </Card>
 
         <div className="space-y-4">
-          {/* Security */}
+          {/* Access & security pointer (PIN form lives in Settings) */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <ShieldCheck className="size-4 text-primary" aria-hidden="true" />
-                Change Access PIN
+                Access &amp; Security
               </CardTitle>
               <CardDescription>
-                Keep your PIN secret. If you forget it, the MDRRMO can issue a reset.
+                Your Access PIN and portal preferences are managed in Settings.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={onSubmit} className="space-y-3" noValidate>
-                <div className="space-y-1.5">
-                  <Label htmlFor="current-pin">Current PIN</Label>
-                  <Input
-                    id="current-pin"
-                    type="password"
-                    autoComplete="current-password"
-                    value={currentPin}
-                    onChange={(e) => setCurrentPin(e.target.value)}
-                    disabled={saving}
-                  />
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="new-pin">New PIN</Label>
-                    <Input
-                      id="new-pin"
-                      type="password"
-                      autoComplete="new-password"
-                      value={newPin}
-                      onChange={(e) => setNewPin(e.target.value)}
-                      disabled={saving}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="confirm-pin">Confirm New PIN</Label>
-                    <Input
-                      id="confirm-pin"
-                      type="password"
-                      autoComplete="new-password"
-                      value={confirmPin}
-                      onChange={(e) => setConfirmPin(e.target.value)}
-                      disabled={saving}
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">Minimum of 6 characters.</p>
-                {formError && (
-                  <Alert variant="destructive" className="py-2">
-                    <Info />
-                    <AlertDescription>{formError}</AlertDescription>
-                  </Alert>
-                )}
-                <Button type="submit" disabled={saving}>
-                  {saving ? "Updating…" : "Update PIN"}
-                </Button>
-              </form>
+              <Button variant="outline" size="sm" className="gap-1.5" onClick={onOpenSettings}>
+                <Settings2 className="size-4" aria-hidden="true" /> Open Settings
+              </Button>
             </CardContent>
           </Card>
 

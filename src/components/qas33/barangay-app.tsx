@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Settings2,
   User,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -42,6 +43,7 @@ import { cn } from "@/lib/utils";
 import { api } from "@/lib/qas33/api";
 import type { BarangayOverview, NotificationItem, SessionInfo } from "@/lib/qas33/types";
 import { ProfileTab } from "./barangay-misc";
+import { SettingsTab } from "./barangay-settings";
 import { DashboardTab } from "./barangay-tabs";
 import { LoadError, errMsg } from "./barangay-shared";
 import FileLibrary from "./file-library";
@@ -51,7 +53,7 @@ import { PlanBuildersTab } from "./plan-builders";
 import ServicesTab from "./services-generator";
 import { LiveClock } from "./ui-kit";
 
-type TabKey = "dashboard" | "frontpage" | "plans" | "services" | "files" | "profile";
+type TabKey = "dashboard" | "frontpage" | "plans" | "services" | "files" | "profile" | "settings";
 
 const NAV_GROUPS: Array<{
   label: string;
@@ -77,7 +79,10 @@ const NAV_GROUPS: Array<{
   },
   {
     label: "Account",
-    items: [{ key: "profile", label: "Profile", icon: User }],
+    items: [
+      { key: "profile", label: "Profile", icon: User },
+      { key: "settings", label: "Settings", icon: Settings2 },
+    ],
   },
 ];
 
@@ -267,7 +272,7 @@ export default function BarangayApp({
                 <span>
                   You are still using the temporary PIN issued by the MDRRMO. Please set your own PIN.
                 </span>
-                <Button size="sm" variant="outline" onClick={() => setTab("profile")}>
+                <Button size="sm" variant="outline" onClick={() => setTab("settings")}>
                   Change PIN
                 </Button>
               </AlertDescription>
@@ -303,7 +308,9 @@ export default function BarangayApp({
 
           {tab === "files" && <FileLibrary session={session} />}
 
-          {tab === "profile" && <ProfileTab session={session} overview={overview} />}
+          {tab === "profile" && <ProfileTab session={session} overview={overview} onOpenSettings={() => setTab("settings")} />}
+
+          {tab === "settings" && <SettingsTab session={session} onOpenEditor={() => setTab("frontpage")} />}
         </div>
 
         {/* Footer */}
