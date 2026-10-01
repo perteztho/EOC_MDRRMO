@@ -1,0 +1,987 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ ADMIN USERS (MDRRMO / System Admin) ============
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  name         String
+  position     String?
+  role         String    @default("MDRRMO_OFFICER") // SYSTEM_ADMIN | MDRRMO_OFFICER | MDRRMO_STAFF
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  storedFiles  StoredFile[]
+}
+
+// ============ BARANGAYS ============
+
+model Barangay {
+  id         String        @id @default(cuid())
+  code       String        @unique // e.g. PD-BRG-001
+  name       String
+  captain    String?
+  population Int?
+  households Int?
+  puroks     Int?
+  landArea   Float?
+  // Real barangay profile (brgy_profile data): VMG + official seal logo
+  vision     String?
+  mission    String?
+  goals      String?
+  objectives String?
+  logoUrl    String?
+  active     Boolean       @default(true)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  credential BarangayCredential?
+  submissions Submission[]
+  auditLogs  AuditLog[]
+  officials  BarangayOfficial[]
+  storedFiles StoredFile[]
+  purokZones Purok[]
+  boundary   BarangayBoundary?
+  reportedSubtotals BarangayReportedSubtotal[]
+  plans      BarangayPlan[]
+  residents  ResidentAccount[]
+  serviceDocs ServiceDocument[]
+  frontpage  BarangayFrontpage?
+  inquiries  FrontpageInquiry[]
+}
+
+// Barangay public frontpage — the barangay-branded public website served at
+// /barangay/<slug> (e.g. /barangay/agol). `content` is a JSON document
+// (structure: src/lib/qas33/frontpage-types.ts). When no row exists the public
+// site serves registry + DB-derived defaults; the row is created the first
+// time the barangay portal user saves edits (they administer the page).
+model BarangayFrontpage {
+  id         String   @id @default(cuid())
+  barangayId String   @unique
+  barangay   Barangay @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  content    String   @default("{}") // JSON — BarangayFrontpageContent
+  published  Boolean  @default(true)
+  updatedBy  String? // barangay code of the last editor
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Public inquiries received through a barangay frontpage (contact-form
+// messages + service requests). Listed and resolved in the barangay portal
+// Frontpage manager.
+model FrontpageInquiry {
+  id         String   @id @default(cuid())
+  barangayId String
+  barangay   Barangay @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  kind       String   @default("MESSAGE") // MESSAGE | SERVICE_REQUEST
+  name       String
+  contact    String? // email / mobile supplied by the sender
+  service    String? // requested service title (SERVICE_REQUEST only)
+  message    String
+  status     String   @default("NEW") // NEW | DONE
+  createdAt  DateTime @default(now())
+}
+
+// Sangguniang Barangay members (council) per barangay
+model BarangayOfficial {
+  id         String   @id @default(cuid())
+  barangayId String
+  barangay   Barangay @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  name       String
+  position   String // PUNONG_BARANGAY | KAGAWAD | SK_CHAIRPERSON | SECRETARY | TREASURER
+  committee  String? // committee chairmanship (kagawads)
+  order      Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Catalog of standard barangay official positions (LGC Book III Title I)
+model OfficialPosition {
+  id        String  @id @default(cuid())
+  key       String  @unique // PUNONG_BARANGAY | KAGAWAD | SK_CHAIRPERSON | SECRETARY | TREASURER
+  title     String
+  titleFil  String? // Filipino title
+  category  String  @default("ELECTIVE") // ELECTIVE | APPOINTIVE
+  seats     Int     @default(1) // seats per barangay
+  order     Int     @default(0)
+  active    Boolean @default(true)
+}
+
+// Puroks (sub-barangay zones) of each barangay
+model Purok {
+  id           String            @id @default(cuid())
+  barangayId   String
+  barangay     Barangay          @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  code         String            @unique // e.g. PD-BRG-004-P01
+  name         String // "Purok 1 - Sampaguita"
+  zoneLeader   String?
+  order        Int               @default(0)
+  active       Boolean           @default(true)
+  demographics PurokDemographic?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+// Demographic profile per purok (CBMS-style BDRRMP baseline data)
+model PurokDemographic {
+  id          String   @id @default(cuid())
+  purokId     String   @unique
+  purok       Purok    @relation(fields: [purokId], references: [id], onDelete: Cascade)
+  households  Int      @default(0)
+  families    Int      @default(0)
+  population  Int      @default(0)
+  male        Int      @default(0)
+  female      Int      @default(0)
+  age0to4     Int      @default(0)
+  age5to11    Int      @default(0)
+  age12to17   Int      @default(0)
+  age18to59   Int      @default(0)
+  age60plus   Int      @default(0)
+  pwd         Int      @default(0)
+  pregnant    Int      @default(0)
+  soloParents Int      @default(0)
+  // Real purok profile (brgy_per_purok_profile data) — extended breakdown
+  extendedFamilies Int  @default(0)
+  seniorMale  Int      @default(0)
+  seniorFemale Int     @default(0)
+  pwdMale     Int      @default(0)
+  pwdFemale   Int      @default(0)
+  soloParentMale Int   @default(0)
+  soloParentFemale Int @default(0)
+  fourPs      Int? // 4Ps household count (null = not reported)
+  updatedAt   DateTime @updatedAt
+}
+
+// Geographic boundary / location profile of each barangay (1:1)
+model BarangayBoundary {
+  id          String    @id @default(cuid())
+  barangayId  String    @unique
+  barangay    Barangay  @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  north       String? // textual boundary description
+  south       String?
+  east        String?
+  west        String?
+  adjacent    String? // comma-separated adjacent barangay names
+  latitude    Float? // representative center point
+  longitude   Float?
+  elevationM  Int? // estimated elevation above sea level (meters)
+  areaHa      Float?
+  coastal     Boolean   @default(false) // fronting Burias Pass
+  upland      Boolean   @default(false)
+  urban       Boolean   @default(false) // poblacion barangay
+  polygonJson String? // JSON: approximate bounding polygon [[lat,lng],...]
+  updatedAt   DateTime  @updatedAt
+}
+
+// Barangay-reported aggregate figures (annual BDRRMP / CBMS reporting)
+model BarangayReportedSubtotal {
+  id                         String    @id @default(cuid())
+  barangayId                 String
+  barangay                   Barangay  @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  year                       Int       @default(2026)
+  population                 Int       @default(0)
+  households                 Int       @default(0)
+  families                   Int       @default(0)
+  purokCount                 Int       @default(0)
+  landAreaHa                 Float?
+  male                       Int       @default(0)
+  female                     Int       @default(0)
+  seniorCount                Int       @default(0)
+  pwdCount                   Int       @default(0)
+  pregnantCount              Int       @default(0)
+  soloParentCount            Int       @default(0)
+  floodProneHouseholds       Int       @default(0)
+  landslideProneHouseholds   Int       @default(0)
+  stormSurgeProneHouseholds  Int       @default(0)
+  farmingHouseholds          Int       @default(0)
+  fishingHouseholds          Int       @default(0)
+  evacuationCapacity         Int       @default(0)
+  reportedBy                 String?
+  reportedAt                 DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+
+  @@unique([barangayId, year])
+}
+
+model BarangayCredential {
+  id             String    @id @default(cuid())
+  barangayId     String    @unique
+  pinHash        String
+  tempPin        String? // plaintext temp PIN shown to MDRRMO admin only ONCE at generation (nulled after first change)
+  mustChangePin  Boolean   @default(true)
+  active         Boolean   @default(true)
+  failedAttempts Int       @default(0)
+  lockedUntil    DateTime?
+  lastLoginAt    DateTime?
+  lastLoginIp    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  barangay       Barangay  @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+}
+
+// ============ SESSIONS ============
+
+model Session {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  role       String // BARANGAY | ADMIN
+  barangayId String?
+  adminId    String?
+  ip         String?
+  userAgent  String?
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+}
+
+// ============ TEMPLATE (sections & fields, EN + TL labels) ============
+
+model TemplateSection {
+  id            String  @id @default(cuid())
+  key           String  @unique // barangay_profile, hazard_assessment, ...
+  order         Int
+  titleEn       String
+  titleTl       String
+  descEn        String?
+  descTl        String?
+  icon          String? // lucide icon name
+  requiresUpload Boolean @default(false)
+  uploadLabelEn  String?
+  uploadLabelTl  String?
+  uploadFormats  String  @default("pdf,jpg,jpeg,png,doc,docx")
+  uploadMaxMB    Float   @default(10)
+  required       Boolean @default(true)
+  active         Boolean @default(true)
+  fieldsJson     String  @default("[]") // JSON: [{key,type,labelEn,labelTl,required,options?,helpEn?,helpTl?,unit?,placeholder?}]
+}
+
+// ============ SUBMISSIONS ============
+
+model Submission {
+  id             String   @id @default(cuid())
+  barangayId     String
+  barangay       Barangay @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  year           Int
+  status         String   @default("NOT_STARTED")
+  templateLang   String? // EN | TL
+  valuesJson     String   @default("{}")
+  progress       Int      @default(0)
+  version        Int      @default(0) // increments per submission
+  submittedAt    DateTime?
+  resubmittedAt  DateTime?
+  underReviewAt  DateTime?
+  approvedAt     DateTime?
+  finalizedAt    DateTime?
+  downloadedAt   DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  files     SubmissionFile[]
+  versions  SubmissionVersion[]
+  reviews   Review[]
+  ratings   Rating[]
+  documents GeneratedDocument[]
+
+  @@unique([barangayId, year])
+}
+
+model SubmissionVersion {
+  id           String   @id @default(cuid())
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  version      Int
+  valuesJson   String
+  filesJson    String   @default("[]")
+  note         String?
+  submittedAt  DateTime @default(now())
+}
+
+model SubmissionFile {
+  id           String   @id @default(cuid())
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  sectionKey   String
+  filename     String
+  storageKey   String
+  mimeType     String
+  size         Int
+  version      Int      @default(1)
+  status       String   @default("PENDING") // PENDING | APPROVED | NEEDS_REVISION
+  uploadedBy   String
+  uploadedAt   DateTime @default(now())
+}
+
+// ============ REVIEWS ============
+
+model Review {
+  id             String   @id @default(cuid())
+  submissionId   String
+  submission     Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  version        Int
+  reviewerId     String
+  reviewerName   String
+  action         String // START_REVIEW | COMMENT | REVISION_REQUESTED | APPROVED | RATED
+  overallComment String?
+  createdAt      DateTime @default(now())
+  comments       ReviewComment[]
+}
+
+model ReviewComment {
+  id               String   @id @default(cuid())
+  reviewId         String
+  review           Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  sectionKey       String
+  comment          String
+  requiresRevision Boolean  @default(false)
+  createdAt        DateTime @default(now())
+}
+
+// ============ RATINGS (configurable criteria) ============
+
+model RatingCriterion {
+  id       String  @id @default(cuid())
+  key      String  @unique
+  name     String
+  maxScore Int
+  order    Int
+  active   Boolean @default(true)
+}
+
+model Rating {
+  id           String   @id @default(cuid())
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  scoresJson   String // {"completeness":25,...}
+  total        Int
+  remarks      String?
+  ratedBy      String
+  ratedByName  String?
+  createdAt    DateTime @default(now())
+}
+
+// ============ GENERATED DOCUMENTS ============
+
+model GeneratedDocument {
+  id            String   @id @default(cuid())
+  submissionId  String
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  docId         String   @unique // QAS33-BDRRMP-26-006
+  version       Int
+  fileKey       String
+  lang          String   @default("EN")
+  signed        Boolean  @default(false)
+  signedBy      String?
+  signedAt      DateTime?
+  signatureHash String?
+  generatedAt   DateTime @default(now())
+  downloads     DownloadLog[]
+}
+
+model DownloadLog {
+  id           String   @id @default(cuid())
+  documentId   String
+  document     GeneratedDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  downloadedBy String
+  ip           String?
+  createdAt    DateTime @default(now())
+}
+
+// ============ NOTIFICATIONS ============
+
+model Notification {
+  id         String   @id @default(cuid())
+  barangayId String? // null => ADMIN audience
+  audience   String // BARANGAY | ADMIN
+  type       String // COMMENT | REVISION | SUBMITTED | APPROVED | FINALIZED | SYSTEM
+  title      String
+  body       String?
+  link       String?
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+// ============ AUDIT TRAIL ============
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorType  String // BARANGAY | ADMIN | SYSTEM
+  actorName  String
+  action     String
+  detail     String?
+  barangayId String?
+  barangay   Barangay? @relation(fields: [barangayId], references: [id], onDelete: SetNull)
+  ip         String?
+  createdAt  DateTime @default(now())
+}
+
+// ============ FILE LIBRARY (documents & images uploaded by ANY user) ============
+
+model StoredFile {
+  id           String     @id @default(cuid())
+  ownerType    String     // BARANGAY | ADMIN
+  barangayId   String?
+  barangay     Barangay?  @relation(fields: [barangayId], references: [id], onDelete: SetNull)
+  adminId      String?
+  admin        AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  ownerName    String     // "Barangay Bacong" | "Noel F. Ordona (MDRRMO Officer)"
+  category     String     @default("General") // General | Photo / Documentation | Report | Correspondence | Supporting Document
+  title        String?
+  description  String?
+  originalName String
+  storageKey   String
+  mimeType     String
+  kind         String     @default("DOCUMENT") // IMAGE | DOCUMENT
+  size         Int
+  downloads    Int        @default(0)
+  createdAt    DateTime   @default(now())
+}
+
+// ============ TUTORIALS ============
+
+model Tutorial {
+  id      String  @id @default(cuid())
+  key     String  @unique
+  titleEn String
+  titleTl String
+  bodyEn  String
+  bodyTl  String
+  order   Int
+  active  Boolean @default(true)
+}
+
+// ============ SETTINGS ============
+
+model SystemSetting {
+  key   String @id
+  value String // JSON-encoded
+}
+
+// ===========================================================================
+// PUBLIC PORTAL — configurable frontpage, dual operating modes, public content
+// ===========================================================================
+
+// Admin-managed homepage sections (DRAFT state; public sees published snapshots)
+model HomepageSection {
+  id           String   @id @default(cuid())
+  sectionKey   String   @unique // public anchor id, e.g. "weather"
+  template     String // hero | alertBanner | weather | forecast | announcements | ticker | hotlines | quickActions | dashboard | evacuation | preparedness | hazard | news | stats | links | custom
+  name         String // admin-facing name
+  heading      String   @default("")
+  subtitle     String?
+  description  String?
+  status       String   @default("ACTIVE") // ACTIVE | HIDDEN | DRAFT
+  displayOrder Int      @default(0)
+  config       String   @default("{}") // JSON SectionConfig — layout, bg, CTA, link, modes, schedule, items
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Public Dashboard widgets (DRAFT state; public sees published snapshots)
+model DashboardWidget {
+  id           String   @id @default(cuid())
+  widgetKey    String   @unique
+  type         String // status | alerts | weather | forecast | hotlines | incidents | evacuation | announcements | ticker | preparedness | hazard | contacts | quicklinks
+  title        String
+  displayOrder Int      @default(0)
+  enabled      Boolean  @default(true)
+  config       String   @default("{}") // JSON WidgetConfig — size, icon, cta, link, refresh, mode/device visibility
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Published homepage versions (sections + widgets + nav + footer + settings).
+// Publishing creates a snapshot; restoring re-seeds rows from an old snapshot.
+model HomepageSnapshot {
+  id        String   @id @default(cuid())
+  version   Int
+  note      String?
+  data      String // JSON PortalPublishedData
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// Key/value configuration scopes with draft vs published separation
+// scopes: general | operational | weather | alert | navigation | footer
+model SiteConfig {
+  id        String   @id @default(cuid())
+  scope     String   @unique
+  draft     String   @default("{}")
+  published String   @default("{}")
+  updatedAt DateTime @updatedAt
+}
+
+model Announcement {
+  id             String    @id @default(cuid())
+  title          String
+  category       String    @default("GENERAL") // GENERAL | WEATHER_ADVISORY | DISASTER_ADVISORY | EVACUATION | SUSPENSION | PUBLIC_SAFETY | ROAD_ADVISORY | RELIEF_OPERATION | EMERGENCY_ALERT
+  priority       String    @default("NORMAL") // LOW | NORMAL | HIGH | CRITICAL
+  content        String
+  imageUrl       String?
+  attachmentUrl  String?
+  publishAt      DateTime  @default(now())
+  expiresAt      DateTime?
+  areas          String? // affected barangays, comma-separated
+  status         String    @default("PUBLISHED") // DRAFT | PUBLISHED | ARCHIVED
+  featured       Boolean   @default(false)
+  pinned         Boolean   @default(false)
+  showOnHomepage Boolean   @default(true)
+  linkUrl        String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model TickerMessage {
+  id           String    @id @default(cuid())
+  message      String
+  priority     String    @default("NORMAL") // NORMAL | HIGH | EMERGENCY
+  icon         String?
+  active       Boolean   @default(true)
+  displayOrder Int       @default(0)
+  startsAt     DateTime?
+  endsAt       DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model EmergencyHotline {
+  id           String   @id @default(cuid())
+  agency       String
+  serviceType  String
+  phone        String
+  icon         String   @default("phone") // lucide icon name
+  category     String   @default("EMERGENCY")
+  priority     Int      @default(0)
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model PublicAlert {
+  id        String    @id @default(cuid())
+  title     String
+  level     String    @default("ADVISORY") // INFO | ADVISORY | WARNING | CRITICAL
+  message   String
+  active    Boolean   @default(true)
+  linkUrl   String?
+  startsAt  DateTime?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model PreparednessTopic {
+  id           String   @id @default(cuid())
+  title        String
+  hazard       String   @default("GENERAL") // TYPHOON | FLOOD | LANDSLIDE | EARTHQUAKE | STORM_SURGE | FIRE | GENERAL
+  phase        String   @default("BEFORE") // BEFORE | DURING | AFTER
+  content      String
+  icon         String?
+  displayOrder Int      @default(0)
+  visible      Boolean  @default(true)
+  linkUrl      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// News & Public Updates posts. `category` mirrors NewsCategory.key for the
+// public API; rich posts add author, tags, gallery, attachments, targeting.
+model NewsArticle {
+  id             String    @id @default(cuid())
+  title          String
+  category       String    @default("GENERAL") // mirrors NewsCategory.key
+  categoryId      String? // FK to NewsCategory (optional — keeps legacy rows valid)
+  subtitle       String? // excerpt / subtitle
+  summary        String?
+  content        String // rich text (sanitized HTML or plain text)
+  author         String?
+  tags           String? // comma-separated
+  featuredImage  String?
+  galleryJson    String? // JSON: string[] image urls
+  attachmentsJson String? // JSON: [{title,url,size?}]
+  linksJson      String? // JSON: [{label,url}]
+  thumbnailUrl   String?
+  publishAt      DateTime  @default(now())
+  expiresAt      DateTime?
+  targetAudience String    @default("ALL") // ALL | RESIDENTS | BARANGAY_OFFICIALS
+  targetBarangays String? // comma-separated barangay names (blank = all)
+  pushEnabled    Boolean   @default(false)
+  emergency      Boolean   @default(false) // visually stands out on the public site
+  featured       Boolean   @default(false)
+  pinned         Boolean   @default(false)
+  status         String    @default("PUBLISHED") // DRAFT | SCHEDULED | PUBLISHED | ARCHIVED
+  linkUrl        String?
+  createdById    String?
+  createdByName  String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// News category catalog (admin-managed)
+model NewsCategory {
+  id           String   @id @default(cuid())
+  key          String   @unique // EMERGENCY_ALERT | PUBLIC_ADVISORY | ...
+  name         String
+  description  String?
+  color        String   @default("gov-blue") // accent token
+  emergency    Boolean  @default(false) // category carries urgent content
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Full evacuation-center record (Evacuation Management module).
+// `capacity` = total capacity (persons); occupancy breakdown + facility flags.
+// status: OPEN | NEAR_CAPACITY | FULL | CLOSED | PREPARING (legacy LIMITED mapped on read)
+model EvacuationCenter {
+  id                  String    @id @default(cuid())
+  code                String?   @unique // PD-EVC-001
+  name                String
+  barangay            String // display name of the barangay
+  barangayId           String? // FK to Barangay (nullable for legacy/manual rows)
+  address             String?
+  latitude            Float?
+  longitude           Float?
+  contactPerson       String?
+  contactNumber       String?
+  facilityType        String    @default("SCHOOL") // SCHOOL | BARANGAY_HALL | CHURCH | GYMNASIUM | COVERED_COURT | EVAC_SITE | MUNICIPAL_EVAC_CENTER | MULTI_PURPOSE_HALL | MUNICIPAL_BUILDING | RHU | CHURCH_SCHOOL | OTHER
+  capacity            Int       @default(0) // total capacity (individuals / persons)
+  capacityFamilies    Int? // rated capacity in families (from MDRRMO center profile)
+  landAreaSqm         Float? // land area of the facility in square meters
+  currentOccupants    Int       @default(0)
+  maleOccupants       Int       @default(0)
+  femaleOccupants     Int       @default(0)
+  childrenOccupants   Int       @default(0)
+  seniorOccupants     Int       @default(0)
+  pwdOccupants        Int       @default(0)
+  pregnantOccupants   Int       @default(0)
+  otherVulnerable     Int       @default(0)
+  accessibleFacilities String? // e.g. ramp, wide doors
+  waterStatus         String    @default("AVAILABLE") // AVAILABLE | LIMITED | UNAVAILABLE
+  electricityStatus   String    @default("AVAILABLE") // AVAILABLE | GENERATOR_ONLY | UNAVAILABLE
+  washStatus          String    @default("AVAILABLE") // toilets / WASH
+  medicalAssistance  Boolean   @default(false)
+  foodRelief         Boolean   @default(false)
+  sleepingArea       Boolean   @default(true)
+  generator           Boolean   @default(false)
+  vehicleAccess       Boolean   @default(true)
+  petsAllowed         Boolean   @default(false)
+  status              String    @default("OPEN") // OPEN | NEAR_CAPACITY | FULL | CLOSED | PREPARING
+  statusOverride      Boolean   @default(false) // manual override of auto-computed status
+  specialNotes        String?
+  notes               String? // legacy notes (kept for portal content compat)
+  lastUpdatedBy       String?
+  displayOrder        Int       @default(0)
+  visible             Boolean   @default(true) // active toggle (soft delete)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  occupancyLogs EvacuationOccupancyLog[]
+  statusHistory EvacuationStatusHistory[]
+}
+
+// Occupancy snapshots — written on every occupancy update (audit + trends)
+model EvacuationOccupancyLog {
+  id             String   @id @default(cuid())
+  centerId       String
+  center         EvacuationCenter @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  occupants      Int
+  male           Int      @default(0)
+  female         Int      @default(0)
+  children       Int      @default(0)
+  seniors        Int      @default(0)
+  pwd            Int      @default(0)
+  pregnant       Int      @default(0)
+  otherVulnerable Int     @default(0)
+  note           String?
+  recordedBy     String
+  recordedByName String?
+  createdAt      DateTime @default(now())
+}
+
+// Status transitions (incl. manual overrides with reason)
+model EvacuationStatusHistory {
+  id             String   @id @default(cuid())
+  centerId       String
+  center         EvacuationCenter @relation(fields: [centerId], references: [id], onDelete: Cascade)
+  previousStatus String?
+  newStatus      String
+  reason         String?
+  overridden     Boolean  @default(false)
+  changedBy      String
+  changedByName  String?
+  createdAt      DateTime @default(now())
+}
+
+// Evacuation announcements published to the public site (Broadcast channel)
+model EvacuationAnnouncement {
+  id              String    @id @default(cuid())
+  title           String
+  message         String
+  priority        String    @default("NORMAL") // NORMAL | HIGH | URGENT | CRITICAL
+  targetBarangays String? // comma-separated barangay names (blank = all)
+  targetCenterIds String? // JSON array of evacuation center ids
+  status          String    @default("PUBLISHED") // DRAFT | SCHEDULED | PUBLISHED | EXPIRED | CANCELLED
+  publishAt       DateTime  @default(now())
+  expiresAt       DateTime?
+  pushSent        Boolean   @default(false)
+  showOnWebsite   Boolean   @default(true)
+  createdBy       String
+  createdByName   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ===========================================================================
+// PLAN BUILDERS — BDRRM Plan Builder (v5) & BDP Plan Builder (v2)
+// Template definitions seeded from the production HTML builders; every
+// barangay portal gets the same builder catalog and saves its own plan data.
+// ===========================================================================
+
+// A plan builder definition (e.g. BDRRM_PLAN v5, BDP_PLAN v2)
+model PlanBuilder {
+  id             String   @id @default(cuid())
+  code           String   @unique // BDRRM_PLAN | BDP_PLAN
+  version        Int      @default(1)
+  titleEn        String
+  titleTl        String
+  subtitleEn     String?
+  subtitleTl     String?
+  descriptionEn  String?
+  descriptionTl  String?
+  icon           String   @default("clipboard-list") // lucide icon name
+  color          String   @default("emerald") // accent token
+  docPrefix      String   @default("QAS33-PLAN") // document reference prefix
+  active         Boolean  @default(true)
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  sections       PlanBuilderSection[]
+  plans          BarangayPlan[]
+}
+
+// One section of a plan builder (form fields stored as JSON)
+model PlanBuilderSection {
+  id         String       @id @default(cuid())
+  builderId  String
+  builder    PlanBuilder  @relation(fields: [builderId], references: [id], onDelete: Cascade)
+  code       String // e.g. bdrrm_profile
+  order      Int
+  groupEn    String? // e.g. "Part I — Barangay Profile"
+  groupTl    String?
+  titleEn    String
+  titleTl    String
+  descEn     String?
+  descTl     String?
+  icon       String?
+  required   Boolean      @default(true)
+  fieldsJson String       @default("[]") // JSON: PlanFieldDef[] (text/textarea/number/select/radio/checkbox/table)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@unique([builderId, code])
+}
+
+// A barangay's saved plan document (one per builder + plan year)
+// status: NOT_STARTED | DRAFT | COMPLETED | SUBMITTED (awaiting MDRRMO approval)
+//       | APPROVED (MDRRMO) | PROVINCE_APPROVED (also approved by the Provincial
+//       DRRM Officer) | RETURNED (sent back with review note)
+model BarangayPlan {
+  id          String       @id @default(cuid())
+  barangayId  String
+  barangay    Barangay     @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  builderCode String // BDRRM_PLAN | BDP_PLAN
+  year        Int
+  status      String       @default("NOT_STARTED")
+  valuesJson  String       @default("{}") // { fieldKey: value, tableFieldKey: [{col:val}] }
+  progress    Int          @default(0) // 0-100
+  submittedAt     DateTime?
+  submittedByName String?
+  reviewedBy      String? // admin user name
+  reviewedAt      DateTime?
+  reviewNote      String?
+  docRef          String? // e.g. QAS33-BDRRMP-26-006 (set on approval)
+  provincialApprovedBy String? // Provincial DRRM Officer name (2nd-level approval)
+  provincialApprovedAt DateTime?
+  provincialNote      String?
+  lastExportAt    DateTime?
+  lastExportFormat String? // pdf | docx
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  builder     PlanBuilder  @relation(fields: [builderCode], references: [code], onDelete: Cascade)
+
+  @@unique([barangayId, builderCode, year])
+}
+
+// ===========================================================================
+// BROADCAST CENTER — one message, many channels
+// ===========================================================================
+
+// A broadcast composed in the admin Broadcast Center.
+// status: DRAFT | SCHEDULED | SENT | CANCELLED | FAILED
+// channelsJson: string[] of WEBSITE | HOME_BANNER | TICKER | NEWS | PUSH | EVAC_CENTER | DASHBOARD
+model Broadcast {
+  id                  String    @id @default(cuid())
+  title               String
+  message             String
+  priority            String    @default("NORMAL") // NORMAL | IMPORTANT | URGENT | CRITICAL
+  channelsJson        String    @default("[]")
+  targetAudience      String    @default("ALL") // ALL | RESIDENTS | BARANGAY_OFFICIALS
+  targetBarangaysJson String    @default("[]") // JSON: string[] barangay names
+  targetCenterIdsJson String    @default("[]") // JSON: string[] evacuation center ids
+  status              String    @default("DRAFT")
+  scheduledAt         DateTime?
+  expiresAt           DateTime?
+  sentAt              DateTime?
+  sentById            String?
+  sentByName          String?
+  statsJson           String    @default("{}") // per-channel outcome summary
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  targets             BroadcastTarget[]
+  deliveryLogs        NotificationDeliveryLog[]
+}
+
+// Explicit target records for a broadcast (barangays / evacuation centers / ALL)
+model BroadcastTarget {
+  id          String    @id @default(cuid())
+  broadcastId String
+  broadcast   Broadcast @relation(fields: [broadcastId], references: [id], onDelete: Cascade)
+  targetType  String // ALL | BARANGAY | EVAC_CENTER
+  targetRef   String // barangay name / center id / "ALL"
+  targetName  String?
+  createdAt   DateTime  @default(now())
+}
+
+// Web-push device subscriptions (service-worker based)
+model NotificationSubscription {
+  id          String    @id @default(cuid())
+  endpoint    String    @unique
+  p256dh      String
+  auth        String
+  audience    String    @default("PUBLIC") // PUBLIC | BARANGAY | ADMIN
+  barangay    String? // barangay name when audience=BARANGAY
+  userAgent   String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  lastSeenAt  DateTime  @default(now())
+}
+
+// Delivery record for every notification/broadcast attempt (per channel)
+model NotificationDeliveryLog {
+  id            String    @id @default(cuid())
+  broadcastId   String?
+  broadcast     Broadcast? @relation(fields: [broadcastId], references: [id], onDelete: SetNull)
+  channel       String // PUSH | WEBSITE | HOME_BANNER | TICKER | NEWS | EVAC_CENTER | DASHBOARD
+  target        String // ALL / barangay name / device count summary
+  priority      String    @default("NORMAL")
+  status        String    @default("SENT") // SENT | SCHEDULED | FAILED | CANCELLED
+  deviceCount   Int       @default(0)
+  deliveredCount Int      @default(0)
+  openedCount   Int       @default(0)
+  error         String?
+  sentBy        String?
+  sentByName    String?
+  createdAt     DateTime  @default(now())
+}
+
+// Public incident reports submitted through the Report Emergency modal
+model IncidentReport {
+  id            String   @id @default(cuid())
+  referenceNo   String   @unique // PD-INC-YYYY-NNNNNN
+  type          String
+  urgency       String   @default("MODERATE") // LOW | MODERATE | HIGH | CRITICAL
+  name          String?
+  contact       String?
+  location      String
+  barangay      String?
+  description   String?
+  latitude      String?
+  longitude     String?
+  attachmentUrl String?
+  consent       Boolean  @default(false)
+  status        String   @default("RECEIVED") // RECEIVED | REVIEWING | DISPATCHED | RESOLVED | DISMISSED
+  adminNotes    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ===========================================================================
+// RESIDENT ACCOUNTS — public frontpage registration
+// ===========================================================================
+
+// Residents register from the public portal (residentSignup section);
+// barangays then auto-fill certificates from the resident directory.
+model ResidentAccount {
+  id           String    @id @default(cuid())
+  fullName     String
+  email        String?   @unique
+  phone        String?
+  barangayId   String
+  barangay     Barangay  @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  purok        String?
+  address      String?
+  birthdate    DateTime?
+  sex          String? // MALE | FEMALE | OTHER
+  civilStatus  String?
+  occupation   String?
+  purpose      String? // reason for registering (optional)
+  passwordHash String // for future resident login (hashed at registration)
+  status       String    @default("ACTIVE") // ACTIVE | PENDING | SUSPENDED | REJECTED
+  verifiedAt   DateTime?
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  documents    ServiceDocument[]
+}
+
+// ===========================================================================
+// SERVICE DOCUMENTS — barangay certificate & DRRM report generator
+// ===========================================================================
+
+// docType: BRGY_CLEARANCE | BRGY_RESIDENCY | BRGY_INDIGENCY | BUSINESS_PERMIT | AARL | SPOT_REPORT
+// status: DRAFT → ISSUED (PDF generated) | CANCELLED
+model ServiceDocument {
+  id          String    @id @default(cuid())
+  docType     String
+  controlNo   String    @unique // e.g. PD-BRG-006-CLR-25-0001
+  barangayId  String
+  barangay    Barangay  @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  residentId  String?
+  resident    ResidentAccount? @relation(fields: [residentId], references: [id], onDelete: SetNull)
+  data        String    @default("{}") // JSON — document fields per docType
+  status      String    @default("DRAFT")
+  issuedBy    String? // barangay user who issued
+  issuedAt    DateTime?
+  fileKey     String? // stored PDF key under db/storage/services/
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Admin-uploaded map overlay layers (GeoJSON; KML converted at upload) for the public satellite map
+model MapOverlay {
+  id            String   @id @default(cuid())
+  name          String
+  kind          String   @default("geojson") // geojson | kml (stored normalized as GeoJSON)
+  geojson       String // normalized GeoJSON FeatureCollection JSON string
+  featureCount  Int      @default(0)
+  strokeColor   String?
+  fillColor     String?
+  visible       Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  fileName      String?
+  fileSize      Int      @default(0)
+  notes         String?
+  createdByName String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
