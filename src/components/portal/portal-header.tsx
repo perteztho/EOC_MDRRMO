@@ -462,7 +462,7 @@ function PortalNavDrawer({
             </span>
           </SheetTitle>
           <SheetDescription className="relative text-xs text-slate-300">
-            Official public information portal — Pio Duran, Albay
+            DRRM public information portal — Pio Duran, Albay
           </SheetDescription>
           <div className="relative pt-1">
             <span
@@ -485,7 +485,7 @@ function PortalNavDrawer({
 
         {/* Body */}
         <div className="flex-1 p-4">
-          <p className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Navigate</p>
+          <p className="px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Navigate</p>
           <nav aria-label="Main navigation" className="flex flex-col gap-1">
             {navItems.map((item, idx) => {
               const resolved = resolveLink(item.link, linkCtx);
@@ -497,7 +497,7 @@ function PortalNavDrawer({
                   link={item.link}
                   ctx={linkCtx}
                   onClick={() => onOpenChange(false)}
-                  className="group flex min-h-12 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:translate-x-0.5 hover:bg-gov-blue-50 hover:text-gov-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
+                  className="group flex min-h-10 items-center gap-3 rounded-xl px-15 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:translate-x-0.5 hover:bg-gov-blue-50 hover:text-gov-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
                 >
                   <span
                     className={cn(

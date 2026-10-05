@@ -28,8 +28,8 @@ function ConsoleSkeleton() {
           className="h-11 w-11 rounded-full object-contain animate-pulse"
         />
         <div>
-          <div className="text-lg font-bold tracking-tight">QAS33</div>
-          <div className="text-xs text-muted-foreground">BDRRMP Monitoring System</div>
+          <div className="text-lg font-bold tracking-tight">MDRRMO</div>
+          <div className="text-xs text-muted-foreground">EOC Monitoring System</div>
         </div>
       </div>
       <div className="h-1.5 w-40 overflow-hidden rounded-full bg-muted">

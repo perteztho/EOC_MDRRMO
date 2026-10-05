@@ -246,7 +246,7 @@ function ConsoleUsers({ session }: { session: SessionInfo }) {
                 <TableBody>
                   {users.map((u) => {
                     const isSelf = u.id === selfId;
-                    const isDefault = u.username === "sysadmin";
+                    const isDefault = u.username === "";
                     return (
                       <TableRow key={u.id}>
                         <TableCell className="pl-4 font-mono text-xs">{u.username}</TableCell>

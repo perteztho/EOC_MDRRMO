@@ -191,7 +191,7 @@ export function buildDefaultFrontpageContent(b: DefaultFrontpageBarangay): Baran
   const today = new Date().toISOString().slice(0, 10);
   return {
     tagline: "Serbisyong tapat, mabilis at may malasakit — para sa bawat pamilya.",
-    welcomeMessage: `Welcome to the official online portal of Barangay ${bare}, Pio Duran, Albay. Access announcements, request documents, verify residency, and reach your council — all in one place.`,
+    welcomeMessage: `Welcome to the online portal of Barangay ${bare}, Pio Duran, Albay. Access announcements, request documents, verify residency, and reach your council — all in one place.`,
     history: `Barangay ${bare} is one of the 33 barangays of the Municipality of Pio Duran, Province of Albay (Region V — Bicol). Guided by the Municipal DRRM Office through the QAS33 program, the barangay maintains its Barangay Disaster Risk Reduction and Management Plan (BDRRMP) and Barangay Development Plan (BDP), and works continuously toward a safe, inclusive and progressive community.`,
     vision:
       b.vision?.trim() ||
