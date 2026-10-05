@@ -41,18 +41,21 @@ import { PortalPushButton } from "./portal-push";
 export function EmergencyBanner({ bannerText }: { bannerText: string }) {
   if (!bannerText) return null;
   return (
-    <div role="alert" className="relative z-40">
+    <div role="alert" className="relative z-50">
       <div aria-hidden="true" className="portal-warning-stripes h-1.5 w-full" />
-      <div className="bg-emergency-red-dark text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-center gap-3 px-4 py-2.5 text-center">
-          <span className="relative flex shrink-0 items-center">
-            <span className="portal-status-dot absolute inline-flex size-4 rounded-full bg-gov-gold/60" aria-hidden="true" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 to-transparent opacity-50" />
+        <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-3 px-4 py-2.5 text-center">
+          <span className="relative flex shrink-0 items-center justify-center">
+            <span className="absolute inline-flex size-4 animate-ping rounded-full bg-gov-gold/40" />
             <Siren aria-hidden="true" className="relative size-4 text-gov-gold" />
           </span>
-          <p className="text-xs font-semibold leading-snug sm:text-sm">{bannerText}</p>
+          <p className="text-xs font-semibold leading-snug tracking-wide text-white/95 sm:text-sm">
+            {bannerText}
+          </p>
         </div>
       </div>
-      <div aria-hidden="true" className="portal-alert-glow h-0.5 w-full bg-gov-gold/90" />
+      <div aria-hidden="true" className="h-px w-full bg-gradient-to-r from-transparent via-gov-gold to-transparent" />
     </div>
   );
 }
@@ -95,65 +98,67 @@ export function UtilityBar({
   return (
     <div
       className={cn(
-        "hidden border-b border-white/10 text-[11px] text-slate-300 sm:block",
-        emergency ? "border-red-900/40 bg-red-950" : "bg-gov-blue-deep"
+        "hidden border-b border-white/5 text-[11px] text-slate-300 sm:block",
+        emergency ? "bg-red-950/90 backdrop-blur-sm" : "bg-slate-950/95 backdrop-blur-sm"
       )}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <p className="flex min-w-0 items-center gap-2 py-1.5 font-medium tracking-[0.08em]">
-          <span aria-hidden="true" className="hidden size-1 shrink-0 rounded-full bg-gov-gold md:inline-block" />
-          <span className="truncate">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 sm:px-6 lg:px-8">
+        <p className="flex min-w-0 items-center gap-2 font-medium tracking-[0.12em] text-slate-400">
+          <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-gov-gold shadow-[0_0_8px_rgba(234,179,8,0.5)]" />
+          <span className="truncate text-slate-300">
             REPUBLIC OF THE PHILIPPINES
-            <span aria-hidden="true" className="px-1.5 text-gov-gold/70">·</span>
+            <span aria-hidden="true" className="px-2 text-slate-600">•</span>
             REGION V (BICOL)
-            <span aria-hidden="true" className="px-1.5 text-gov-gold/70">·</span>
+            <span aria-hidden="true" className="px-2 text-slate-600">•</span>
             PROVINCE OF ALBAY
           </span>
         </p>
-        <div className="flex shrink-0 items-center gap-2.5 py-1.5">
+        <div className="flex shrink-0 items-center gap-3">
           {clock ? (
-            <span
-              className="hidden items-center gap-1.5 font-medium tracking-wide text-slate-200 md:inline-flex"
-              suppressHydrationWarning
-            >
-              <Clock aria-hidden="true" className="size-3 text-gov-gold/80" />
-              {clock} · PHT
+            <span className="flex items-center gap-2 font-medium tracking-wide text-slate-300" suppressHydrationWarning>
+              <Clock aria-hidden="true" className="size-3.5 text-gov-gold/80" />
+              <span className="font-mono text-xs text-slate-200">{clock}</span>
+              <span className="text-[10px] font-bold tracking-widest text-slate-500">PHT</span>
             </span>
           ) : null}
+          
+          <div className="h-3 w-px bg-slate-800" />
+          
           {general.facebookUrl ? (
             <a
               href={general.facebookUrl}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="MDRRMO Pio Duran on Facebook (opens in a new tab)"
-              className="flex size-6 items-center justify-center rounded text-slate-300 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
+              className="flex size-7 items-center justify-center rounded-md text-slate-400 transition-all hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             >
               <Facebook aria-hidden="true" className="size-3.5" />
             </a>
           ) : null}
+          
           {!preview ? (
-            <>
+            <div className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => onOpenLogin?.("admin")}
-                className="rounded px-2 py-1 font-medium tracking-wide transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
+                className="rounded-md px-2.5 py-1.5 text-xs font-semibold tracking-wide text-slate-300 transition-all hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
                 MDRRMO Login
               </button>
-              <span aria-hidden="true" className="text-slate-600">
-                |
-              </span>
+              <span aria-hidden="true" className="text-slate-700">|</span>
               <button
                 type="button"
                 onClick={() => onOpenLogin?.("barangay")}
                 title="Browse the public frontpages of the 33 barangays"
-                className="rounded px-2 py-1 font-medium tracking-wide transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
+                className="rounded-md px-2.5 py-1.5 text-xs font-semibold tracking-wide text-slate-300 transition-all hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
                 Barangay Public
               </button>
-            </>
+            </div>
           ) : (
-            <span className="px-2 py-1 text-slate-500">Preview Mode</span>
+            <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-500 ring-1 ring-amber-500/20">
+              Preview Mode
+            </span>
           )}
         </div>
       </div>
@@ -171,14 +176,17 @@ function StatusPill({ mode, className }: { mode: OperationalMode; className?: st
   return (
     <span
       className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-full border px-3 text-[11px] font-bold tracking-wider shadow-sm",
+        "inline-flex h-9 items-center gap-2.5 rounded-full border px-3.5 text-[11px] font-bold tracking-wider shadow-sm backdrop-blur-sm transition-colors",
         emergency
-          ? "border-red-200 bg-red-50 text-red-800"
-          : "border-emerald-200 bg-emerald-50 text-emerald-800",
+          ? "border-red-200 bg-red-50/80 text-red-700 ring-1 ring-red-500/10"
+          : "border-emerald-200 bg-emerald-50/80 text-emerald-700 ring-1 ring-emerald-500/10",
         className
       )}
     >
-      <span aria-hidden="true" className={cn("size-2 rounded-full", emergency ? "portal-status-dot bg-red-600" : "bg-emerald-500")} />
+      <span className="relative flex size-2 shrink-0 items-center justify-center">
+        <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", emergency ? "bg-red-500" : "bg-emerald-500")} />
+        <span className={cn("relative size-2 rounded-full shadow-sm", emergency ? "bg-red-600" : "bg-emerald-500")} />
+      </span>
       {label}
     </span>
   );
@@ -192,15 +200,17 @@ function StatusDot({ mode, className }: { mode: OperationalMode; className?: str
     <span
       title={label}
       className={cn(
-        "inline-flex h-8 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-bold tracking-wider shadow-sm",
-        emergency ? "border-red-200 bg-red-50 text-red-800" : "border-emerald-200 bg-emerald-50 text-emerald-800",
+        "inline-flex h-8 items-center gap-2 rounded-full border px-2.5 text-[10px] font-bold tracking-wider shadow-sm backdrop-blur-sm",
+        emergency ? "border-red-200 bg-red-50/80 text-red-700 ring-1 ring-red-500/10" : "border-emerald-200 bg-emerald-50/80 text-emerald-700 ring-1 ring-emerald-500/10",
         className
       )}
     >
-      <span aria-hidden="true" className={cn("size-2 rounded-full", emergency ? "portal-status-dot bg-red-600" : "bg-emerald-500")} />
+      <span className="relative flex size-2 shrink-0 items-center justify-center">
+        <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", emergency ? "bg-red-500" : "bg-emerald-500")} />
+        <span className={cn("relative size-2 rounded-full", emergency ? "bg-red-600" : "bg-emerald-500")} />
+      </span>
       <span className="sm:hidden">{emergency ? "ALERT" : "NORMAL"}</span>
       <span className="hidden sm:inline">{label.toUpperCase()}</span>
-      <span className="sr-only"> — {label}</span>
     </span>
   );
 }
@@ -258,14 +268,14 @@ export function PortalHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b bg-white/95 backdrop-blur transition-shadow duration-300",
-        "border-slate-200/80",
-        scrolled && "shadow-[0_10px_32px_-20px_rgba(2,15,63,0.5)]"
+        "sticky top-0 z-40 border-b bg-white/80 backdrop-blur-xl transition-all duration-300",
+        scrolled ? "border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)]" : "border-transparent shadow-none"
       )}
     >
       {/* Government gold sentinel line — top */}
-      <div aria-hidden="true" className="h-1 w-full bg-gov-gold" />
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-16 sm:gap-3 sm:px-6 lg:px-8">
+      <div aria-hidden="true" className="h-1 w-full bg-gradient-to-r from-gov-gold/80 via-gov-gold to-gov-gold/80" />
+      
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <a
           href="#main-content"
@@ -273,43 +283,44 @@ export function PortalHeader({
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className="flex min-w-0 items-center gap-2.5 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2 sm:gap-3"
+          className="group flex min-w-0 items-center gap-3 rounded-xl p-1 -ml-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
           aria-label="MDRRMO Pio Duran — back to top"
         >
-          {/* Official MDRRMO seal (logome.webp) on a white disc with a gold sentinel dot */}
-          <span className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5 sm:size-11">
+          <span className="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-transform group-hover:scale-105 group-hover:shadow-md">
             <img
               src="/logome-256.webp"
               alt=""
               aria-hidden="true"
-              className="size-9 rounded-full object-contain sm:size-10"
+              className="size-9 rounded-full object-contain"
             />
             <span
               aria-hidden="true"
-              className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white bg-gov-gold"
+              className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border-2 border-white bg-gov-gold shadow-sm"
             />
           </span>
           <span className="flex min-w-0 flex-col leading-tight">
-            <span className="truncate text-[13px] font-extrabold uppercase tracking-tight text-gov-blue-deep sm:text-base">
+            <span className="truncate text-sm font-bold tracking-tight text-slate-900 transition-colors group-hover:text-gov-blue-deep">
               MDRRMO PIO DURAN
             </span>
-            <span className="hidden truncate text-[11px] font-medium text-slate-500 sm:block">
-              Disaster Risk Reduction &amp; Management Office
+            <span className="hidden truncate text-[11px] font-medium tracking-wide text-slate-500 sm:block">
+              Disaster Risk Reduction & Management
             </span>
           </span>
         </a>
 
-        {/* Right actions: status + hamburger (always).
-            Emergency Hotline / Report actions live in the nav drawer, the hero
-            CTAs and the mobile bottom app bar — the top bar stays clean. */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Compact status on phones, full pill ≥md */}
+        {/* Right actions: status + hamburger (always). */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <StatusDot mode={mode} className="md:hidden" />
           <StatusPill mode={mode} className="hidden md:inline-flex" />
+          
           <span aria-hidden="true" className="hidden h-6 w-px bg-slate-200 md:block" />
-          {/* Push notification bell (live portal only, ≥md — phones get the card
-              inside the evacuation finder / news section) */}
-          {pushStatus ? <div className="hidden md:block"><PortalPushButton pushStatus={pushStatus} /></div> : null}
+          
+          {pushStatus ? (
+            <div className="hidden md:block">
+              <PortalPushButton pushStatus={pushStatus} />
+            </div>
+          ) : null}
+          
           <Button
             type="button"
             variant="ghost"
@@ -317,15 +328,15 @@ export function PortalHeader({
             aria-label="Open navigation menu"
             aria-expanded={navOpen}
             onClick={() => onNavOpenChange(true)}
-            className="size-11 rounded-lg text-gov-blue hover:bg-gov-blue-50 hover:text-gov-blue focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
+            className="size-11 rounded-xl text-slate-600 transition-all hover:bg-slate-100 hover:text-gov-blue-deep focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
           >
             <Menu aria-hidden="true" className="size-5" />
           </Button>
         </div>
       </div>
 
-      {/* Government gold sentinel line — bottom */}
-      <div aria-hidden="true" className="h-1 w-full bg-gov-gold" />
+      {/* Subtle bottom separator */}
+      <div aria-hidden="true" className="h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
       {/* Universal navigation drawer (hamburger — all screen sizes) */}
       <PortalNavDrawer
@@ -432,21 +443,20 @@ function PortalNavDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex w-[86vw] max-w-sm flex-col gap-0 overflow-y-auto p-0 portal-scroll sm:max-w-md"
+        className="flex w-[86vw] max-w-sm flex-col gap-0 overflow-y-auto p-0 portal-scroll sm:max-w-md bg-slate-50/95 backdrop-blur-xl"
       >
         {/* Brand header */}
         <SheetHeader
           className={cn(
-            "relative border-b p-4 pb-5 text-left",
+            "relative border-b p-5 pb-6 text-left",
             emergency
-              ? "border-red-900/60 bg-gradient-to-br from-red-950 via-emergency-red-dark to-gov-blue-deep"
-              : "border-gov-blue-800/60 bg-gradient-to-br from-gov-blue-deep via-gov-blue to-gov-blue-700"
+              ? "border-red-900/50 bg-gradient-to-br from-red-950 via-red-900 to-slate-900"
+              : "border-slate-800/50 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
           )}
         >
-          <div aria-hidden="true" className="portal-grid-pattern pointer-events-none absolute inset-0 opacity-60" />
-          <SheetTitle className="relative flex items-center gap-3 text-base text-white">
-            {/* Official MDRRMO seal on a white disc for contrast on dark bg */}
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5">
+          <div aria-hidden="true" className="portal-grid-pattern pointer-events-none absolute inset-0 opacity-40" />
+          <SheetTitle className="relative flex items-center gap-3 text-base font-semibold text-white">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-black/5">
               <img
                 src="/logome-256.webp"
                 alt=""
@@ -455,28 +465,28 @@ function PortalNavDrawer({
               />
             </span>
             <span className="flex min-w-0 flex-col leading-tight">
-              <span className="truncate">MDRRMO PIO DURAN</span>
-              <span className="truncate text-[11px] font-medium text-slate-200">
-                Disaster Risk Reduction &amp; Management Office
+              <span className="truncate tracking-tight">MDRRMO PIO DURAN</span>
+              <span className="truncate text-[11px] font-medium tracking-wide text-slate-300">
+                Disaster Risk Reduction & Management
               </span>
             </span>
           </SheetTitle>
-          <SheetDescription className="relative text-xs text-slate-300">
+          <SheetDescription className="relative mt-2 text-xs font-medium text-slate-400">
             DRRM public information portal — Pio Duran, Albay
           </SheetDescription>
-          <div className="relative pt-1">
+          <div className="relative mt-4 rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
             <span
               className={cn(
-                "inline-flex h-8 items-center gap-2 rounded-full border px-3 text-[10px] font-bold tracking-wider",
+                "inline-flex h-7 items-center gap-2 rounded-full border px-3 text-[10px] font-bold tracking-wider",
                 emergency
                   ? "border-gov-gold/50 bg-gov-gold/10 text-gov-gold"
                   : "border-emerald-400/40 bg-emerald-400/10 text-emerald-300"
               )}
             >
-              <span
-                aria-hidden="true"
-                className={cn("size-2 rounded-full", emergency ? "portal-status-dot bg-gov-gold" : "bg-emerald-400")}
-              />
+              <span className="relative flex size-2 shrink-0 items-center justify-center">
+                <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", emergency ? "bg-gov-gold" : "bg-emerald-400")} />
+                <span className={cn("relative size-2 rounded-full", emergency ? "bg-gov-gold" : "bg-emerald-400")} />
+              </span>
               {emergency ? "ACTIVE TYPHOON / EMERGENCY OPERATION" : "NORMAL OPERATION"}
             </span>
             <p className="mt-2 text-[11px] leading-relaxed text-slate-300">{modeText}</p>
@@ -484,91 +494,99 @@ function PortalNavDrawer({
         </SheetHeader>
 
         {/* Body */}
-        <div className="flex-1 p-4">
-          <p className="px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Navigate</p>
-          <nav aria-label="Main navigation" className="flex flex-col gap-1">
-            {navItems.map((item, idx) => {
-              const resolved = resolveLink(item.link, linkCtx);
-              const icon = navItemIcon(resolved.kind === "anchor" ? resolved.anchor : null, item.label);
-              const tint = NAV_TINTS[idx % NAV_TINTS.length];
-              return (
-                <LinkAction
-                  key={item.id}
-                  link={item.link}
-                  ctx={linkCtx}
-                  onClick={() => onOpenChange(false)}
-                  className="group flex min-h-10 items-center gap-3 rounded-xl px-15 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:translate-x-0.5 hover:bg-gov-blue-50 hover:text-gov-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
-                >
-                  <span
-                    className={cn(
-                      "flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors",
-                      tint === "blue" && "bg-gov-blue-50 text-gov-blue group-hover:bg-gov-blue group-hover:text-white",
-                      tint === "amber" && "bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white",
-                      tint === "teal" && "bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white",
-                      tint === "red" && "bg-red-50 text-red-600 group-hover:bg-emergency-red group-hover:text-white",
-                      tint === "cyan" && "bg-cyan-50 text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white",
-                      tint === "slate" && "bg-slate-100 text-slate-600 group-hover:bg-slate-700 group-hover:text-white",
-                      tint === "orange" && "bg-orange-50 text-orange-600 group-hover:bg-orange-500 group-hover:text-white"
-                    )}
+        <div className="flex-1 space-y-6 p-5">
+          <div>
+            <p className="mb-3 px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Navigate</p>
+            <nav aria-label="Main navigation" className="flex flex-col gap-2">
+              {navItems.map((item, idx) => {
+                const resolved = resolveLink(item.link, linkCtx);
+                const icon = navItemIcon(resolved.kind === "anchor" ? resolved.anchor : null, item.label);
+                const tint = NAV_TINTS[idx % NAV_TINTS.length];
+                return (
+                  <LinkAction
+                    key={item.id}
+                    link={item.link}
+                    ctx={linkCtx}
+                    onClick={() => onOpenChange(false)}
+                    className="group relative flex min-h-11 items-center gap-4 rounded-xl border border-transparent bg-white/60 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-200 hover:bg-white hover:shadow-md hover:translate-x-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
                   >
-                    <PortalIcon name={icon} className="size-4.5" />
-                  </span>
-                  <span className="flex-1 truncate">{item.label}</span>
-                  <PortalIcon name="chevron-right" className="size-4 text-slate-300 transition-transform group-hover:translate-x-0.5" />
-                </LinkAction>
-              );
-            })}
-          </nav>
+                    <span
+                      className={cn(
+                        "flex size-9 shrink-0 items-center justify-center rounded-lg border transition-all",
+                        tint === "blue" && "border-gov-blue-100 bg-gov-blue-50 text-gov-blue group-hover:bg-gov-blue group-hover:text-white group-hover:border-gov-blue",
+                        tint === "amber" && "border-amber-100 bg-amber-50 text-amber-600 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500",
+                        tint === "teal" && "border-teal-100 bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-600",
+                        tint === "red" && "border-red-100 bg-red-50 text-red-600 group-hover:bg-red-600 group-hover:text-white group-hover:border-red-600",
+                        tint === "cyan" && "border-cyan-100 bg-cyan-50 text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white group-hover:border-cyan-600",
+                        tint === "slate" && "border-slate-200 bg-slate-100 text-slate-600 group-hover:bg-slate-700 group-hover:text-white group-hover:border-slate-700",
+                        tint === "orange" && "border-orange-100 bg-orange-50 text-orange-600 group-hover:bg-orange-500 group-hover:text-white group-hover:border-orange-500"
+                      )}
+                    >
+                      <PortalIcon name={icon} className="size-5" />
+                    </span>
+                    <span className="flex-1 truncate">{item.label}</span>
+                    <PortalIcon name="chevron-right" className="size-4 text-slate-300 transition-transform group-hover:translate-x-1 group-hover:text-gov-blue" />
+                  </LinkAction>
+                );
+              })}
+            </nav>
+          </div>
 
-          <p className="mb-2 mt-6 px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Emergency</p>
-          <div className="flex flex-col gap-2">
-            <Button
-              type="button"
-              onClick={() => onOpenModal("report")}
-              className="h-12 w-full gap-2 bg-emergency-red text-sm font-bold text-white hover:bg-red-700 focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
-            >
-              <Siren aria-hidden="true" className="size-4" />
-              Report an Incident
-            </Button>
-            <Button
-              type="button"
-              onClick={() => onOpenModal("hotlines")}
-              className="h-12 w-full gap-2 bg-gov-gold text-sm font-bold text-gov-blue-deep hover:bg-gov-gold-dark focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
-            >
-              <PhoneCall aria-hidden="true" className="size-4" />
-              Emergency Hotlines
-            </Button>
-            <a
-              href={telHref(general.hotline)}
-              className="flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 text-sm font-semibold text-gov-blue hover:border-gov-blue hover:bg-gov-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
-            >
-              <PhoneCall aria-hidden="true" className="size-4" />
-              Call MDRRMO: {general.hotline}
-            </a>
-            {onOpenEvac ? (
-              <button
+          <div>
+            <p className="mb-3 px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Emergency Actions</p>
+            <div className="flex flex-col gap-3">
+              <Button
                 type="button"
-                onClick={onOpenEvac}
-                className="flex min-h-12 w-full items-center gap-3 rounded-xl border border-gov-blue-100 bg-gov-blue-50 px-3 text-sm font-semibold text-gov-blue transition-all hover:translate-x-0.5 hover:border-gov-blue hover:bg-gov-blue hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
+                onClick={() => onOpenModal("report")}
+                className="group relative h-12 w-full gap-3 overflow-hidden bg-gradient-to-r from-red-600 to-red-700 text-sm font-bold text-white shadow-lg shadow-red-900/20 transition-all hover:shadow-red-900/30 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
               >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gov-blue text-white">
-                  <TentTree aria-hidden="true" className="size-4.5" />
+                <span className="relative z-10 flex items-center gap-3">
+                  <Siren aria-hidden="true" className="size-5 animate-pulse" />
+                  Report an Incident
                 </span>
-                <span className="flex-1 text-left">Evacuation Centers</span>
-                <span className="text-[10px] font-bold uppercase tracking-wide text-emerald-600">Live map</span>
-              </button>
-            ) : null}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => onOpenModal("hotlines")}
+                className="group relative h-12 w-full gap-3 overflow-hidden bg-gradient-to-r from-amber-400 to-amber-500 text-sm font-bold text-slate-900 shadow-lg shadow-amber-900/10 transition-all hover:shadow-amber-900/20 hover:brightness-105 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+              >
+                <span className="relative z-10 flex items-center gap-3">
+                  <PhoneCall aria-hidden="true" className="size-5" />
+                  Emergency Hotlines
+                </span>
+              </Button>
+              <a
+                href={telHref(general.hotline)}
+                className="flex h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-gov-blue hover:bg-gov-blue-50 hover:text-gov-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
+              >
+                <PhoneCall aria-hidden="true" className="size-4" />
+                Call MDRRMO: {general.hotline}
+              </a>
+              {onOpenEvac ? (
+                <button
+                  type="button"
+                  onClick={onOpenEvac}
+                  className="group flex min-h-12 w-full items-center gap-3 rounded-xl border border-gov-blue-100 bg-gov-blue-50/50 px-4 text-sm font-semibold text-gov-blue transition-all hover:border-gov-blue hover:bg-gov-blue hover:text-white hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-gov-blue text-white shadow-sm transition-colors group-hover:bg-white group-hover:text-gov-blue">
+                    <TentTree aria-hidden="true" className="size-5" />
+                  </span>
+                  <span className="flex-1 text-left">Evacuation Centers</span>
+                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700 transition-colors group-hover:bg-white group-hover:text-emerald-700">Live Map</span>
+                </button>
+              ) : null}
+            </div>
           </div>
 
           {!preview ? (
-            <>
-              <p className="mb-2 mt-6 px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Portals</p>
+            <div>
+              <p className="mb-3 px-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Portals</p>
               <div className="flex flex-col gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => onOpenLogin?.("admin")}
-                  className="h-11 w-full justify-start gap-2 border-slate-200 text-sm font-medium text-slate-700 hover:border-gov-blue hover:text-gov-blue focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
+                  className="h-11 w-full justify-start gap-3 border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-gov-blue hover:bg-gov-blue-50 hover:text-gov-blue focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
                 >
                   <LogIn aria-hidden="true" className="size-4" />
                   MDRRMO Login
@@ -577,23 +595,22 @@ function PortalNavDrawer({
                   type="button"
                   variant="outline"
                   onClick={() => onOpenLogin?.("barangay")}
-                  className="h-11 w-full justify-start gap-2 border-slate-200 text-sm font-medium text-slate-700 hover:border-gov-blue hover:text-gov-blue focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
+                  className="h-11 w-full justify-start gap-3 border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-gov-blue hover:bg-gov-blue-50 hover:text-gov-blue focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
                 >
                   <Globe aria-hidden="true" className="size-4" />
                   Barangay Public
                 </Button>
-                <p className="px-1 text-[11px] leading-relaxed text-slate-400">
-                  Browse the 33 barangay frontpages — each barangay’s own public page with announcements, services, events
-                  and contacts. Barangay staff sign in from their frontpage.
+                <p className="mt-2 px-1 text-[11px] leading-relaxed text-slate-500">
+                  Browse the 33 barangay frontpages — each barangay’s own public page with announcements, services, events and contacts.
                 </p>
               </div>
-            </>
+            </div>
           ) : null}
         </div>
 
-        <div className="border-t border-slate-100 p-4">
-          <p className="mb-3 text-center text-[10px] font-medium tracking-wide text-slate-400">
-            REPUBLIC OF THE PHILIPPINES · MUNICIPALITY OF PIO DURAN · ALBAY
+        <div className="border-t border-slate-200 bg-slate-50 p-5">
+          <p className="mb-4 text-center text-[10px] font-medium tracking-wide text-slate-400">
+            REPUBLIC OF THE PHILIPPINES • MUNICIPALITY OF PIO DURAN • ALBAY
           </p>
           <button
             type="button"
@@ -601,7 +618,7 @@ function PortalNavDrawer({
               onOpenChange(false);
               scrollToAnchor("main-content");
             }}
-            className="w-full rounded-lg bg-gov-blue px-4 py-3 text-sm font-bold text-white hover:bg-gov-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
+            className="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-slate-800 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gov-gold focus-visible:ring-offset-2"
           >
             Close Menu
           </button>

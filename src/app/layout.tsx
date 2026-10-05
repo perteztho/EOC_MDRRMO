@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "MDRRMO – Monitoring System | Municipality of Pio Duran MDRRMO",
   description:
-    "QAS33 — Barangay DRRM Plan Review, Tracking, Submission & Management System. Connecting the 33 barangays of Pio Duran with the MDRRMO through faster, simpler, transparent, and accountable digital transactions.",
+    "MDRRMO EOC Monitoring, Tracking, Submission & Management System. Connecting the 33 barangays of Pio Duran with the MDRRMO through faster, simpler, transparent, and accountable digital transactions.",
   keywords: ["QAS33", "BDRRMP", "Pio Duran", "MDRRMO", "DRRM", "Albay", "barangay"],
   manifest: "/manifest.webmanifest",
   icons: {
